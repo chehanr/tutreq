@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-md-12">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"> ACBT TutReq </a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li class="{% if nbar_active == 'request_form' %}active{% endif %}">
+                            <a href="{% url 'request_form' %}">Request</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="{% if nbar_active == 'requests_manage' %}active{% endif %}">
+                            <a href="{% url 'requests_manage' %}">Manage</a>
+                        </li>
+                        {% endif %}
+                        <li class="{% if nbar_active == 'about' %}active{% endif %}">
+                            <a href="#">About</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'admin:logout' %}">
+                                <span class="glyphicon glyphicon-log-out"></span> Logout </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin:index' %}">
+                                <span class="glyphicon glyphicon-wrench"></span> Admin </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'admin:login' %}">
+                                <span class="glyphicon glyphicon-log-in"></span> Login </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

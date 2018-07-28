@@ -1,0 +1,59 @@
+{% load staticfiles %}
+<style type="text/css">
+    body {
+        font-family: "Helvetica", "sans-serif";
+        color: #333333;
+    }
+</style>
+<div>
+    <div>
+        <h1>Tutor request: {{ request.text }}</h1>
+        <!-- <img src="{% static 'img/acbt_logo.png' %}"> -->
+        <di>
+            <h2>Request info:</h2>
+            <ul>
+                <li>Request ID: {{ request.id }}</li>
+                <li>Requested on: {{ request.date_time|date:'F jS, Y, g:s a' }}</li>
+                <li>Notes: {{ request.description }}</li>
+                {% if request.dismissed %}
+                    <li>Request status: Dismissed</li>
+                {% else %}
+                    <li>Request status: Waiting</li>
+                {% endif %}
+                {% if request.dismiss_relodge_date_time %}
+                    {% if request.slot.dismissed %}
+                        <li>Relodged on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
+                    {% else %}
+                        <li>Dismissed on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <h2>Student info:</h2>
+            <ul>
+                <li>Student ID: {{ request.student.id }}</li>
+                <li>Name: {{ request.student.name }}</li>
+                <li>Contact number: {{ request.student.phone }}</li>
+            </ul>
+
+            <h2>Slot info:</h2>
+            <ul>
+                <li>Slot: {{ request.slot.text }} (ID: {{ request.slot.id }})</li>
+                <li>Day: {{ request.slot.day }} (Next available: {{ request.slot.next_date_time|date:'F jS, Y' }})</li>
+                <li>Time slot: {{ request.slot.time }}</li>
+                {% if equest.slot.disabled %}
+                    <li>Slot status: Unavailable</li>
+                {% else %}
+                    <li>Slot status: Available</li>
+                {% endif %}
+            </ul>
+
+            <h2>Unit info:</h2>
+            <ul>
+                <li>Unit: {{ request.unit.text }}</li>
+                <li>Course: {{ request.unit.course }}</li>
+                <li>Program: {{ request.unit.program }}</li>
+            </ul>
+        </di>
+    </div>
+</div>

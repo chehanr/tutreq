@@ -1,0 +1,95 @@
+{% extends 'base.html' %} 
+{% load staticfiles %} 
+{% block title %}Tutor Request Form{% endblock %}
+{% block scripts_header %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+{% endblock %} 
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h2>Tutor Request Form</h2>
+            <p>Request a tutor appointment with a selected tutoring slot.</p>
+            <p><a class="btn btn-primary btn-large" href="#">Learn more</a></p>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% for hidden_field in form.hidden_fields %} 
+                    {% if hidden_field.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in hidden_field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                {% endfor %}
+                {% for message in messages %}
+                    {% if 'success' in message.tags %}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">{{ message }}</h4>
+                            <p>{{ message.extra_tags }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% include '__items/select_units.html' %}
+                            </div>
+                            <div class="col-md-6">
+                                {% include '__items/select_slots.html' %}
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                {% include '__items/list_slot_detail.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form method="post" novalidate>
+                    {% csrf_token %} 
+                    {% include '__layouts/bs4_form.html' with form=form %}
+                    <button type="submit" class="btn btn-primary">Submit request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts_footer %}
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $('#selectUnit').on('changed.bs.select', function (e) {
+            var unitId = $(this).val();
+            var baseUrl = '/slots_info_json/';
+            var dataDict = {
+                'unit-id': unitId,
+            };
+            $.ajax({
+                type: 'GET',
+                url: baseUrl,
+                data: dataDict,
+                success: function (response) {
+                    if (!jQuery.isEmptyObject(response))
+                        handleSelectSlot(response);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    // var errMsg = textStatus.concat(': ', errorThrown, '.');
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</script>
+<script type="text/javascript" src="{% static 'js/scripts.js' %}"></script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"window.zoomLevel": 0,
+		"python.linting.pylintArgs": [
+			"--load-plugins=pylint_django"
+	   ],
+	}, 
+}

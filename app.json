@@ -1,0 +1,33 @@
+{
+  "name": "tureq: ACBT Tutorial Request",
+  "description": "A system to create and manage tutorial requests at ACBT (by chehanr).",
+  "image": "heroku/python",
+  "repository": "https://github.com/chehanr/tutreq",
+  "keywords": ["python", "django"],
+  "addons": ["heroku-postgresql"],
+  "env": {
+    "WEB_CONCURRENCY": {
+      "description": "The number of processes to run.",
+      "value": "2"
+    },
+    "DJANGO_SECRET_KEY": {
+      "description": "The secret key for the Django application."
+    },
+    "DJANGO_DJANGO_DEBUG": {
+      "value": "True"
+    },
+    "NORECAPTCHA_TESTING": {
+      "value": "True"
+    },
+    "NORECAPTCHA_SITE_KEY": {},
+    "NORECAPTCHA_SECRET_KEY": {}
+  },
+  "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "python manage.py collectstatic --noinput",
+        "test": "python manage.py test"
+      }
+    }
+  }
+}
