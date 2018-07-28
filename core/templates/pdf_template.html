@@ -21,10 +21,10 @@
                     <li>Request status: Waiting</li>
                 {% endif %}
                 {% if request.dismiss_relodge_date_time %}
-                    {% if request.slot.dismissed %}
-                        <li>Relodged on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
-                    {% else %}
+                    {% if request.dismissed %}
                         <li>Dismissed on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
+                    {% else %}
+                        <li>Relodged on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
                     {% endif %}
                 {% endif %}
             </ul>
