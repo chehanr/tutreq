@@ -17,6 +17,7 @@
     "DJANGO_DJANGO_DEBUG": {
       "value": "True"
     },
+    "ALLOWED_HOSTS": {},
     "NORECAPTCHA_TESTING": {
       "value": "True"
     },
