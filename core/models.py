@@ -44,7 +44,7 @@ class Unit(models.Model):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, blank=True, null=True)
     code = UpperCaseCharField(max_length=10)
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=100)
 
     def __str__(self):
         return '{0} ({1})'.format(self.code, self.title)
