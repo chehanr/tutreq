@@ -6,3 +6,9 @@ body {
 .top-buffer {
     margin-top: 20px;
 }
+
+.navbar-logo {
+    max-width: 100px;
+    margin-top: 7px;
+    margin-right: 7px;
+}
