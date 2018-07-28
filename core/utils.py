@@ -12,11 +12,15 @@ def get_next_date_time(day):
 
     """
 
+    day = int(day)
     today = timezone.now()
-    date_time = today + timedelta(days=int(day) - today.weekday())
 
-    if date_time.day == (today.day):
-        date_time += timedelta(days=7)
+    if day > today.weekday():
+        date_time = today + timedelta(days=day - today.weekday())
+    elif day == today.weekday():
+        date_time = today + timedelta(days=7)
+    else:
+        date_time = today + timedelta(days=7 - today.weekday() + day)
 
     return date_time.replace(minute=0, hour=0, second=0, microsecond=0)
 
