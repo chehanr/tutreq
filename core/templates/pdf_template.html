@@ -13,7 +13,7 @@
             <h2>Request info:</h2>
             <ul>
                 <li>Request ID: {{ request.id }}</li>
-                <li>Requested on: {{ request.date_time|date:'F jS, Y, g:s a' }}</li>
+                <li>Requested on: {{ request.date_time|date:'F jS, Y, f:s a' }}</li>
                 <li>Notes: {{ request.description }}</li>
                 {% if request.dismissed %}
                     <li>Request status: Dismissed</li>
@@ -22,9 +22,9 @@
                 {% endif %}
                 {% if request.dismiss_relodge_date_time %}
                     {% if request.dismissed %}
-                        <li>Dismissed on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
+                        <li>Dismissed on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, f:s a' }}</li>
                     {% else %}
-                        <li>Relodged on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, g:s a' }}</li>
+                        <li>Relodged on: {{ request.dismiss_relodge_date_time|date:'F jS, Y, f:s a' }}</li>
                     {% endif %}
                 {% endif %}
             </ul>
