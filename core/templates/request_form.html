@@ -64,6 +64,7 @@
 {% endblock %}
 {% block scripts_footer %}
 <script type="text/javascript">
+    document.getElementById('id_slot').value = null; // Temp.
     jQuery(document).ready(function ($) {
         $('#selectUnit').on('changed.bs.select', function (e) {
             var unitId = $(this).val();

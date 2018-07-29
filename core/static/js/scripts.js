@@ -1,5 +1,4 @@
 // TODO set bs select on window change.
-document.getElementById('id_slot').value = null; // Temp.
 
 function handleSelectSlot(response) {
     var slots = response.slots;
