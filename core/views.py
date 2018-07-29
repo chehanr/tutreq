@@ -5,6 +5,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
+from django.utils import timezone
 
 from easy_pdf.rendering import render_to_pdf_response
 
@@ -143,17 +144,15 @@ def request_form(request):
 
 @staff_member_required
 def generate_pdf(request):
-    # TODO show generated time.
     request_id = request.GET.get('request-id')
     request_item = get_request_item_dict(request_id)
+    gen_date_time = timezone.now()
 
     template = 'pdf_template.html'
-    context = {'request': request_item}
-
+    context = {'request': request_item, 'generated_date_time': gen_date_time}
     pdf_filename = 'tutreq_request_{0}.pdf'.format(request_item['id'])
 
     return render_to_pdf_response(request, template, context, filename=pdf_filename)
-    # return render(request, 'pdf_template.html', {'request': request_item,})
 
 # Ajax responses:
 
