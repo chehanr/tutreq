@@ -100,7 +100,7 @@ class Request(models.Model):
     dismiss_relodge_date_time = models.DateTimeField(blank=True, null=True)
     dismissed = models.BooleanField(default=False)
     feedback_ref = models.CharField(
-        max_length=10, unique=True, default=ref_code_gen)
+        max_length=10, unique=True, blank=True, null=True, default=ref_code_gen)
 
     def dismiss_relodge(self):
         """ Dismiss or relodge a request. """
