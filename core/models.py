@@ -4,8 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, SATISFACTION_LEVELS, PHONE_REGEX,
-                        STUDENT_ID_REGEX)
+from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, PHONE_REGEX,
+                        SATISFACTION_LEVELS, STUDENT_ID_REGEX)
 
 
 def ref_code_gen():

@@ -1,11 +1,10 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.utils.translation import ugettext_lazy as _
 
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
-from .models import Request, Feedback
+from .models import Feedback, Request
 
 
 class RequestForm(forms.ModelForm):

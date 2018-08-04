@@ -3,13 +3,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from easy_pdf.rendering import render_to_pdf_response
 
-from .forms import RequestForm, FeedbackForm, RequestFeedbackRefField
-from .models import Request, Slot, Unit, Feedback
+from .forms import FeedbackForm, RequestFeedbackRefField, RequestForm
+from .models import Feedback, Request, Slot, Unit
 from .utils import get_day_val, get_next_date_time, get_time_val
 
 # Create your views here.
