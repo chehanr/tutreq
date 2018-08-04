@@ -179,7 +179,9 @@ def request_form(request):
         if form.is_valid():
             request_obj = form.save()
             submission_text = ('Your tutor request (id: {0}) has been '
-                               'submitted and will be reviewed shortly.').format(request_obj.pk)
+                               'submitted and will be reviewed shortly. '
+                               'Feedback reference code: {1}').format(request_obj.pk,
+                                                                      request_obj.feedback_ref)
             # Reset the form.
             form = RequestForm()
 
