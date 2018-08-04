@@ -7,6 +7,19 @@ from django.utils.translation import gettext_lazy as _
 from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, SATISFACTION_LEVELS, PHONE_REGEX,
                         STUDENT_ID_REGEX)
 
+
+def ref_code_gen():
+    while True:
+        from django.utils.crypto import get_random_string
+        from django.core.exceptions import ObjectDoesNotExist
+
+        ref_code = get_random_string(length=8).upper()
+        try:
+            Request.objects.get(feedback_ref=ref_code)
+        except ObjectDoesNotExist:
+            return ref_code
+
+
 # Create your models here.
 
 
@@ -86,6 +99,8 @@ class Request(models.Model):
     date_time = models.DateTimeField(auto_now_add=True, blank=True)
     dismiss_relodge_date_time = models.DateTimeField(blank=True, null=True)
     dismissed = models.BooleanField(default=False)
+    feedback_ref = models.CharField(
+        max_length=10, unique=True, default=ref_code_gen)
 
     def dismiss_relodge(self):
         """ Dismiss or relodge a request. """
