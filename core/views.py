@@ -3,13 +3,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from easy_pdf.rendering import render_to_pdf_response
 
-from .forms import RequestForm
-from .models import Request, Slot, Unit
+from .forms import RequestForm, FeedbackForm, RequestFeedbackRefField
+from .models import Request, Slot, Unit, Feedback
 from .utils import get_day_val, get_next_date_time, get_time_val
 
 # Create your views here.
@@ -78,6 +78,59 @@ def requests_manage(request):
 
     return render(request, 'requests_manage.html', {'requests': requests,
                                                     'nbar_active': 'requests_manage', })
+
+
+def request_feedback(request, ref=None):
+    if ref:
+        ref = ref.upper()
+        request_obj = get_object_or_404(Request, feedback_ref=ref)
+        try:
+            feedback_obj = Feedback.objects.get(request=request_obj)
+            locked = feedback_obj.locked
+        except ObjectDoesNotExist:
+            locked = False
+
+        if locked is False:
+            if request.method == 'POST':
+                form = FeedbackForm(request.POST)
+
+                if form.is_valid():
+                    feedback_obj = form.save(commit=False)
+                    feedback_obj.request = request_obj
+                    feedback_obj.locked = True
+                    feedback_obj.save()
+                    submission_text = ('Your feedback for request id: {0} has been '
+                                       'submitted!').format(request_obj.pk)
+
+                    messages.success(request, 'Feedback submission successful!',
+                                     extra_tags=submission_text)
+
+            else:
+                form = FeedbackForm()
+
+            return render(request, 'request_feedback.html', {'form': form,
+                                                             'form_method': 'post',
+                                                             'form_submit_button': 'Submit feedback',
+                                                             'nbar_active': 'request_feedback', })
+        else:
+            # TODO show locked msg.
+            return redirect('request_feedback')
+
+    else:
+        if request.method == 'GET':
+            form = RequestFeedbackRefField(request.GET)
+
+            if form.is_valid():
+                feedback_ref = form.cleaned_data.get('feedback_ref')
+                return redirect('request_feedback', ref=feedback_ref)
+
+        else:
+            form = RequestFeedbackRefField()
+
+        return render(request, 'request_feedback.html', {'form': form,
+                                                         'form_method': 'get',
+                                                         'form_submit_button': 'Find',
+                                                         'nbar_active': 'request_feedback', })
 
 
 def request_form(request):

@@ -21,6 +21,9 @@ import core.views as core_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', core_views.request_form, name='request_form'),
+    path('feedback/', core_views.request_feedback, name='request_feedback'),
+    path('feedback/<str:ref>/', core_views.request_feedback,
+         name='request_feedback'),
     path('manage/', core_views.requests_manage, name='requests_manage'),
 
     path('generate_pdf/', core_views.generate_pdf, name='generate_pdf'),

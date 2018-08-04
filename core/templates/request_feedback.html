@@ -1,0 +1,52 @@
+{% extends 'base.html' %} 
+{% load staticfiles %} 
+{% block title %}Tutor feedback{% endblock %}
+{% block scripts_header %}
+{% endblock %} 
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h2>Tutor feedback</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% for hidden_field in form.hidden_fields %} 
+                    {% if hidden_field.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in hidden_field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                {% endfor %}
+                {% for message in messages %}
+                    {% if 'success' in message.tags %}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">{{ message }}</h4>
+                            <p>{{ message.extra_tags }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- <p><strong>Select a tutoring session:</strong></p> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form method="{{ form_method }}" novalidate>
+                    {% csrf_token %} 
+                    {% include '__layouts/bs4_form.html' with form=form %}
+                    <button type="submit" class="btn btn-primary">{{ form_submit_button }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts_footer %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}

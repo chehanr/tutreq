@@ -1,9 +1,11 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
+
 
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
-from .models import Request
+from .models import Request, Feedback
 
 
 class RequestForm(forms.ModelForm):
@@ -30,4 +32,29 @@ class RequestForm(forms.ModelForm):
         }
         widgets = {
             'slot': forms.HiddenInput(),
+        }
+
+
+class RequestFeedbackRefField(forms.Form):
+    feedback_ref = forms.CharField(max_length=10)
+
+    def clean_feedback_ref(self):
+        feedback_ref = self.cleaned_data.get('feedback_ref').upper()
+
+        try:
+            Request.objects.get(feedback_ref=feedback_ref)
+        except ObjectDoesNotExist:
+            raise forms.ValidationError('Not found')
+
+        return feedback_ref
+
+
+class FeedbackForm(forms.ModelForm):
+    captcha = NoReCaptchaField()
+
+    class Meta:
+        model = Feedback
+        fields = ('satisfaction', 'description',)
+        labels = {
+            'description': _('Comment'),
         }

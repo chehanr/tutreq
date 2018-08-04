@@ -17,6 +17,9 @@
                         <li class="{% if nbar_active == 'request_form' %}active{% endif %}">
                             <a href="{% url 'request_form' %}">Request</a>
                         </li>
+                        <li class="{% if nbar_active == 'request_feedback' %}active{% endif %}">
+                            <a href="{% url 'request_feedback' %}">Feedback</a>
+                        </li>
                         {% if user.is_authenticated %}
                         <li class="{% if nbar_active == 'requests_manage' %}active{% endif %}">
                             <a href="{% url 'requests_manage' %}">Manage</a>
