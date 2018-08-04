@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, PHONE_REGEX,
+from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, SATISFACTION_LEVELS, PHONE_REGEX,
                         STUDENT_ID_REGEX)
 
 # Create your models here.
@@ -100,3 +100,11 @@ class Request(models.Model):
 
     def __str__(self):
         return '{0}: {1}'.format(self.slot, self.student_id)
+
+
+class Feedback(models.Model):
+    request = models.ForeignKey(Request, on_delete=models.CASCADE)
+    satisfaction = models.CharField(max_length=1, choices=SATISFACTION_LEVELS)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    date_time = models.DateTimeField(auto_now_add=True, blank=True)
+    locked = models.BooleanField(default=False)
