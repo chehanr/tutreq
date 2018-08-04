@@ -57,6 +57,7 @@ def get_request_item_dict(request_id):
         'dismissed': request_obj.dismissed,
         'dismiss_relodge_date_time': request_obj.dismiss_relodge_date_time,
         'description': request_obj.description,
+        'feedback_ref_code': request_obj.feedback_ref,
         'slot': {
             'id': slot.pk,
             'text': str(slot),
@@ -141,7 +142,7 @@ def request_feedback(request, ref=None):
             form = RequestFeedbackRefField(request.GET)
 
             if form.is_valid():
-                feedback_ref = form.cleaned_data.get('feedback_ref')
+                feedback_ref = form.cleaned_data.get('reference_code')
                 return redirect('request_feedback', ref=feedback_ref)
 
         else:

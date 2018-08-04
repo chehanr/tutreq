@@ -127,17 +127,21 @@
                             $('#requestModalDismissButton').text('Dismiss');
                         }
 
+                        $('#feedbackInfoListItem0').text('Reference code: ' + request.feedback_ref_code);
                         if (!jQuery.isEmptyObject(request.feedback)){
-                            $('#feedbackInfoListItem1').removeClass('hidden');
                             $('#feedbackInfoListItem2').removeClass('hidden');
-                            $('#feedbackInfoListItem0').text('Satisfaction level: ' + request.feedback.satisfaction_val); 
-                            $('#feedbackInfoListItem1').text('Comment: ' + request.feedback.description);
-                            $('#feedbackInfoListItem2').text('Made on: ' + moment(request.feedback.date_time).format(
+                            $('#feedbackInfoListItem3').removeClass('hidden');
+                            $('#feedbackInfoListItem1').text('Satisfaction level: ' + request.feedback.satisfaction_val);
+                            if (request.feedback.description)
+                                $('#feedbackInfoListItem2').text('Comment: ' + request.feedback.description);
+                            else
+                                $('#feedbackInfoListItem2').text('Comment: None'); 
+                            $('#feedbackInfoListItem3').text('Made on: ' + moment(request.feedback.date_time).format(
                                 'MMMM Do YYYY, h:mm:ss a'));
                         } else {
-                            $('#feedbackInfoListItem0').text('None'); 
-                            $('#feedbackInfoListItem1').addClass('hidden');
+                            $('#feedbackInfoListItem1').text('No feedback'); 
                             $('#feedbackInfoListItem2').addClass('hidden');
+                            $('#feedbackInfoListItem3').addClass('hidden');
                         }
 
                         $('#studentInfoListItem0').text('Student ID: ' + request.student.id);

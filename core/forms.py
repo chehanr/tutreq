@@ -35,17 +35,17 @@ class RequestForm(forms.ModelForm):
 
 
 class RequestFeedbackRefField(forms.Form):
-    feedback_ref = forms.CharField(max_length=10)
+    reference_code = forms.CharField(max_length=10)
 
-    def clean_feedback_ref(self):
-        feedback_ref = self.cleaned_data.get('feedback_ref').upper()
+    def clean_reference_code(self):
+        reference_code = self.cleaned_data.get('reference_code').upper()
 
         try:
-            Request.objects.get(feedback_ref=feedback_ref)
+            Request.objects.get(feedback_ref=reference_code)
         except ObjectDoesNotExist:
-            raise forms.ValidationError('Not found')
+            raise forms.ValidationError('Failed to identify reference code.')
 
-        return feedback_ref
+        return reference_code
 
 
 class FeedbackForm(forms.ModelForm):

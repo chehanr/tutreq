@@ -90,6 +90,7 @@
                 </div>
                 <h3>Feedback</h3>
                 <div class="content-2">
+                    <p>Feedback reference code: {{ request.feedback_ref_code }}</p>
                     {% if request.feedback %}
                     <p>Feedback ID: {{ request.feedback.id }}</p>
                     <p>Satisfaction level: {{ request.feedback.satisfaction_val }}</p>
