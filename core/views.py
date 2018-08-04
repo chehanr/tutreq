@@ -10,7 +10,7 @@ from easy_pdf.rendering import render_to_pdf_response
 
 from .forms import FeedbackForm, RequestFeedbackRefField, RequestForm
 from .models import Feedback, Request, Slot, Unit
-from .utils import get_day_val, get_next_date_time, get_time_val
+from .utils import get_day_val, get_next_date_time, get_time_val, get_satisfaction_val
 
 # Create your views here.
 
@@ -30,6 +30,25 @@ def get_request_item_dict(request_id):
     unit_title = unit.title
     unit_course = unit.course.title
     unit_program = unit.course.program.title
+
+    try:
+        feedback_obj = Feedback.objects.get(request=request_id)
+    except ObjectDoesNotExist:
+        feedback_dict = None
+    else:
+        feedback = feedback_obj
+        feedback_satisfaction_level = feedback.satisfaction
+        feedback_satisfaction_val = get_satisfaction_val(feedback.satisfaction)
+        feedback_description = feedback.description
+        feedback_date_time = feedback.date_time
+        feedback_dict = {
+            'id': feedback.pk,
+            'text': str(feedback),
+            'satisfaction': feedback_satisfaction_level,
+            'satisfaction_val': feedback_satisfaction_val,
+            'description': feedback_description,
+            'date_time': feedback_date_time,
+        }
 
     request_item = {
         'id': request_obj.pk,
@@ -58,6 +77,7 @@ def get_request_item_dict(request_id):
             'name': request_obj.student_name,
             'phone': request_obj.student_phone_number,
         },
+        'feedback': feedback_dict,
     }
 
     return request_item

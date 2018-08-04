@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-from .constants import AVAILABLE_TIMES, DAYS_OF_WEEK
+from .constants import AVAILABLE_TIMES, DAYS_OF_WEEK, SATISFACTION_LEVELS
 
 
 def get_next_date_time(day):
@@ -37,3 +37,10 @@ def get_time_val(time_key):
                 for time in AVAILABLE_TIMES if time[0] == time_key][0]
 
     return time_val
+
+
+def get_satisfaction_val(satis_key):
+    satis_val = [satis[1]
+                 for satis in SATISFACTION_LEVELS if satis[0] == satis_key][0]
+
+    return satis_val

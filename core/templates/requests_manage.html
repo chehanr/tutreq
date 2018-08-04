@@ -127,6 +127,19 @@
                             $('#requestModalDismissButton').text('Dismiss');
                         }
 
+                        if (!jQuery.isEmptyObject(request.feedback)){
+                            $('#feedbackInfoListItem1').removeClass('hidden');
+                            $('#feedbackInfoListItem2').removeClass('hidden');
+                            $('#feedbackInfoListItem0').text('Satisfaction level: ' + request.feedback.satisfaction_val); 
+                            $('#feedbackInfoListItem1').text('Comment: ' + request.feedback.description);
+                            $('#feedbackInfoListItem2').text('Made on: ' + moment(request.feedback.date_time).format(
+                                'MMMM Do YYYY, h:mm:ss a'));
+                        } else {
+                            $('#feedbackInfoListItem0').text('None'); 
+                            $('#feedbackInfoListItem1').addClass('hidden');
+                            $('#feedbackInfoListItem2').addClass('hidden');
+                        }
+
                         $('#studentInfoListItem0').text('Student ID: ' + request.student.id);
                         $('#studentInfoListItem1').text('Name: ' + request.student.name);
                         $('#studentInfoListItem2').text('Contact number: ' + request.student

@@ -88,6 +88,17 @@
                     {% endif %} {% endif %}
                     <p>Notes: {{ request.description }}</p>
                 </div>
+                <h3>Feedback</h3>
+                <div class="content-2">
+                    {% if request.feedback %}
+                    <p>Feedback ID: {{ request.feedback.id }}</p>
+                    <p>Satisfaction level: {{ request.feedback.satisfaction_val }}</p>
+                    <p>Comment: {{ request.description }}</p>
+                    <p>Made on: {{ request.feedback.date_time|date:'F jS, Y, f:s a' }}</p>
+                    {% else %}
+                    <p>No feedback</p>
+                    {% endif %}
+                </div>
                 <h3>Slot</h3>
                 <div class="content-2">
                     <p>Slot: {{ request.slot.text }} (ID: {{ request.slot.id }})</p>

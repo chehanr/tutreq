@@ -123,3 +123,6 @@ class Feedback(models.Model):
     description = models.CharField(max_length=200, blank=True, null=True)
     date_time = models.DateTimeField(auto_now_add=True, blank=True)
     locked = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{0}: {1}'.format(self.request, self.date_time)
