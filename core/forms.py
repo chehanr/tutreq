@@ -20,9 +20,9 @@ class RequestForm(forms.ModelForm):
             'student_phone_number': _('Phone number'),
             'description': _('Notes'),
         }
-        # help_texts = {
-        #     'name': _('Some useful help text.'),
-        # }
+        help_texts = {
+            'description': _('Mention any alternative slots, topics needed to cover, etc.'),
+        }
         error_messages = {
             'slot': {
                 'required': _('Please select a slot.'),
@@ -30,6 +30,7 @@ class RequestForm(forms.ModelForm):
             },
         }
         widgets = {
+            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'slot': forms.HiddenInput(),
         }
 
