@@ -12,7 +12,8 @@ from easy_pdf.rendering import render_to_pdf_response
 
 from .forms import FeedbackForm, RequestFeedbackRefField, RequestForm
 from .models import Feedback, Request, Slot, Unit
-from .utils import get_day_val, get_next_date_time, get_time_val, get_satisfaction_val
+from .utils import (get_day_val, get_next_date_time, get_satisfaction_val,
+                    get_time_val)
 
 # Create your views here.
 
