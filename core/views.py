@@ -346,7 +346,8 @@ def request_info_json(request):
     status_code = 200
 
     try:
-        request_item = get_request_item_dict(request_id)
+        request_obj = Request.objects.get(pk=request_id)
+        request_item = get_request_item_dict(request_obj)
 
         response_dict = {
             'request': request_item,
