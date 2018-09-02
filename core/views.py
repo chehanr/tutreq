@@ -21,6 +21,8 @@ from .utils import (get_day_val, get_next_date_time, get_satisfaction_val,
 
 
 def get_request_item_dict(request_obj):
+    """Method to format request objects and return a dictionary."""
+
     slot = request_obj.slot
     slot_day = slot.day
     slot_time = slot.time
@@ -86,6 +88,8 @@ def get_request_item_dict(request_obj):
 
 
 def get_request_items_dict(request_id=None):
+    """Method to iterate through request objects and return a dictionary."""
+
     request_items = {'request_items': []}
 
     if request_id:
@@ -102,6 +106,8 @@ def get_request_items_dict(request_id=None):
 
 @staff_member_required
 def requests_manage(request):
+    """View for `requests_manage`."""
+
     request_objs = Request.objects.all().order_by('dismissed', '-date_time')
     page = request.GET.get('page', 1)
     paginator = Paginator(request_objs, 10)
@@ -118,6 +124,8 @@ def requests_manage(request):
 
 
 def request_feedback(request, ref=None):
+    """View for `request_feedback`."""
+
     if ref:
         ref = ref.upper()
         request_obj = get_object_or_404(Request, feedback_ref=ref)
@@ -171,6 +179,8 @@ def request_feedback(request, ref=None):
 
 
 def request_form(request):
+    """View for `request_form`."""
+
     unit_objs = Unit.objects.all().order_by('course')
 
     # TODO Find a cleaner way.
@@ -235,6 +245,8 @@ def request_form(request):
 
 @staff_member_required
 def generate_pdf(request):
+    """Generates a pdf file specific request object."""
+
     request_id = request.GET.get('request-id')
     request_obj = Request.objects.get(pk=request_id)
     request_item = get_request_item_dict(request_obj)
@@ -250,6 +262,8 @@ def generate_pdf(request):
 class Buffer:
     """An object that implements just the write method of the file-like
     interface.
+
+    C & V from: https://docs.djangoproject.com/en/2.1/howto/outputting-csv/#streaming-large-csv-files
     """
 
     def write(self, value):
@@ -259,7 +273,7 @@ class Buffer:
 
 @staff_member_required
 def generate_csv(request, rid=None):
-    """A view that streams a large CSV file."""
+    """Generates a csv file with all (or specific `rid`) request object(s)."""
 
     request_items_dict = get_request_items_dict(rid)
     rows = []
@@ -316,6 +330,8 @@ def generate_csv(request, rid=None):
 
 @staff_member_required
 def dismiss_relodge_request(request):
+    """Json response to get request information and set dismiss/ relodge info."""
+
     request_id = request.GET.get('request-id')
     status_code = 200
 
@@ -342,6 +358,8 @@ def dismiss_relodge_request(request):
 
 @staff_member_required
 def request_info_json(request):
+    """Json response to get request information."""
+
     request_id = request.GET.get('request-id')
     status_code = 200
 
@@ -363,6 +381,8 @@ def request_info_json(request):
 
 
 def slots_info_json(request):
+    """Json response to get slot information."""
+
     unit_id = request.GET.get('unit-id')
     status_code = 200
 
