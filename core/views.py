@@ -1,8 +1,10 @@
+import csv
+
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -17,9 +19,7 @@ from .utils import get_day_val, get_next_date_time, get_time_val, get_satisfacti
 # Non-view methods:
 
 
-def get_request_item_dict(request_id):
-    request_obj = Request.objects.get(pk=request_id)
-
+def get_request_item_dict(request_obj):
     slot = request_obj.slot
     slot_day = slot.day
     slot_time = slot.time
@@ -32,7 +32,7 @@ def get_request_item_dict(request_id):
     unit_program = unit.course.program.title
 
     try:
-        feedback_obj = Feedback.objects.get(request=request_id)
+        feedback_obj = Feedback.objects.get(request=request_obj)
     except ObjectDoesNotExist:
         feedback_dict = None
     else:
@@ -82,6 +82,21 @@ def get_request_item_dict(request_id):
     }
 
     return request_item
+
+
+def get_request_items_dict(request_id=None):
+    request_items = {'request_items': []}
+
+    if request_id:
+        request_obj = get_object_or_404(Request, pk=request_id)
+        request_item = get_request_item_dict(request_obj)
+        request_items['request_items'].append(request_item)
+    else:
+        for request_obj in Request.objects.all():
+            request_item = get_request_item_dict(request_obj)
+            request_items['request_items'].append(request_item)
+
+    return request_items
 
 
 @staff_member_required
@@ -220,7 +235,8 @@ def request_form(request):
 @staff_member_required
 def generate_pdf(request):
     request_id = request.GET.get('request-id')
-    request_item = get_request_item_dict(request_id)
+    request_obj = Request.objects.get(pk=request_id)
+    request_item = get_request_item_dict(request_obj)
     gen_date_time = timezone.now()
 
     template = 'pdf_template.html'
@@ -228,6 +244,71 @@ def generate_pdf(request):
     pdf_filename = 'tutreq_request_{0}.pdf'.format(request_item['id'])
 
     return render_to_pdf_response(request, template, context, filename=pdf_filename)
+
+
+class Buffer:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
+@staff_member_required
+def generate_csv(request, rid=None):
+    """A view that streams a large CSV file."""
+
+    request_items_dict = get_request_items_dict(rid)
+    rows = []
+
+    row_header = (
+        'Request ID', 'Request identifier', 'Request made on',
+        'Student name', 'Student phone number', 'Request dismissed status',
+        'Request dismissed/ relodged time', 'Request notes', 'Request feedback code',
+        'Slot', 'Slot day', 'Slot time',
+        'Slot disabled status', 'Unit code', 'Unit title',
+        'Unit program', 'Feeback satisfaction', 'Feedback comment',
+        'Feedback made on'
+    )
+
+    rows.append(row_header)
+
+    for request_item in request_items_dict['request_items']:
+        row = [
+            request_item['id'], request_item['text'], request_item['date_time'],
+            request_item['student']['name'], request_item['student']['phone'], request_item['dismissed'],
+            request_item['dismiss_relodge_date_time'], request_item['description'], request_item['feedback_ref_code'],
+            request_item['slot']['text'], request_item['slot']['day'], request_item['slot']['time'],
+            request_item['slot']['disabled'], request_item['unit']['code'], request_item['unit']['title'],
+            request_item['unit']['program'],
+        ]
+
+        if request_item['feedback']:
+            feedback_item = [
+                request_item['feedback']['satisfaction_val'],
+                request_item['feedback']['description'],
+                request_item['feedback']['date_time'],
+            ]
+
+            row.extend(feedback_item)
+
+        rows.append(tuple(row))
+
+    pseudo_buffer = Buffer()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                     content_type="text/csv")
+
+    csv_filename = 'tutreq_log.csv'
+    if rid:
+        csv_filename = 'tutreq_log_r-{}.csv'.format(rid)
+
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+        csv_filename)
+
+    return response
 
 # Ajax responses:
 
