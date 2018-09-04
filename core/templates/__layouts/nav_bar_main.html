@@ -25,8 +25,8 @@
                             <a href="{% url 'requests_manage' %}">Manage</a>
                         </li>
                         {% endif %}
-                        <li class="{% if nbar_active == 'about' %}active{% endif %}">
-                            <a href="#">About</a>
+                        <li class="{% if nbar_active == 'about_page' %}active{% endif %}">
+                            <a href="{% url 'about_page' %}">About</a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

@@ -243,6 +243,12 @@ def request_form(request):
                                                  'nbar_active': 'request_form', })
 
 
+def about_page(request):
+    """Displays a static about page."""
+    
+    return render(request, 'about_page.html', {'nbar_active': 'about_page', })
+
+
 @staff_member_required
 def generate_pdf(request):
     """Generates a pdf file specific request object."""
