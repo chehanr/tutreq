@@ -245,7 +245,7 @@ def request_form(request):
 
 def about_page(request):
     """Displays a static about page."""
-    
+
     return render(request, 'about_page.html', {'nbar_active': 'about_page', })
 
 
@@ -286,12 +286,12 @@ def generate_csv(request, rid=None):
 
     row_header = (
         'Request ID', 'Request identifier', 'Request made on',
-        'Student name', 'Student phone number', 'Request dismissed status',
-        'Request dismissed/ relodged time', 'Request notes', 'Request feedback code',
-        'Slot', 'Slot day', 'Slot time',
-        'Slot disabled status', 'Unit code', 'Unit title',
-        'Unit program', 'Feeback satisfaction', 'Feedback comment',
-        'Feedback made on'
+        'Student ID', 'Student name', 'Student phone number',
+        'Request dismissed status', 'Request dismissed/ relodged time', 'Request notes',
+        'Request feedback code', 'Slot', 'Slot day', 
+        'Slot time', 'Slot disabled status', 'Unit code', 
+        'Unit title', 'Unit program', 'Feeback satisfaction', 
+        'Feedback comment', 'Feedback made on'
     )
 
     rows.append(row_header)
@@ -299,11 +299,11 @@ def generate_csv(request, rid=None):
     for request_item in request_items_dict['request_items']:
         row = [
             request_item['id'], request_item['text'], request_item['date_time'],
-            request_item['student']['name'], request_item['student']['phone'], request_item['dismissed'],
-            request_item['dismiss_relodge_date_time'], request_item['description'], request_item['feedback_ref_code'],
-            request_item['slot']['text'], request_item['slot']['day'], request_item['slot']['time'],
-            request_item['slot']['disabled'], request_item['unit']['code'], request_item['unit']['title'],
-            request_item['unit']['program'],
+            request_item['student']['id'], request_item['student']['name'], request_item['student']['phone'], 
+            request_item['dismissed'], request_item['dismiss_relodge_date_time'], request_item['description'], 
+            request_item['feedback_ref_code'], request_item['slot']['text'], request_item['slot']['day'], 
+            request_item['slot']['time'], request_item['slot']['disabled'], request_item['unit']['code'], 
+            request_item['unit']['title'], request_item['unit']['program'],
         ]
 
         if request_item['feedback']:
