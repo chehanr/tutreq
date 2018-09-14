@@ -94,7 +94,7 @@
                     {% if request.feedback %}
                     <p>Feedback ID: {{ request.feedback.id }}</p>
                     <p>Satisfaction level: {{ request.feedback.satisfaction_val }}</p>
-                    <p>Comment: {{ request.description }}</p>
+                    <p>Comment: {{ request.feedback.description }}</p>
                     <p>Made on: {{ request.feedback.date_time|date:'F jS, Y, f:s a' }}</p>
                     {% else %}
                     <p>No feedback</p>
