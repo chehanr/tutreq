@@ -27,7 +27,7 @@
                     {% if 'success' in message.tags %}
                         <div class="alert alert-success" role="alert">
                             <h4 class="alert-heading">{{ message }}</h4>
-                            <p>{{ message.extra_tags }}</p>
+                            <p>{{ message.extra_tags | safe }}</p>
                         </div>
                     {% endif %}
                 {% endfor %}

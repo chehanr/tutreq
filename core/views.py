@@ -225,10 +225,10 @@ def request_form(request):
 
         if form.is_valid():
             request_obj = form.save()
-            submission_text = ('Your tutor request (id: {0}) has been '
-                               'submitted and will be reviewed shortly. '
-                               'Feedback reference code: {1}').format(request_obj.pk,
-                                                                      request_obj.feedback_ref)
+            submission_text = ('Your tutor request has been '
+                               'submitted and will be reviewed shortly.<br/>'
+                               'Feedback reference code: <strong>{0}</strong><br/>'
+                               '<em>Make sure to attend the tutoring session on time.</em>').format(request_obj.feedback_ref)
             # Reset the form.
             form = RequestForm()
 
@@ -288,9 +288,9 @@ def generate_csv(request, rid=None):
         'Request ID', 'Request identifier', 'Request made on',
         'Student ID', 'Student name', 'Student phone number',
         'Request dismissed status', 'Request dismissed/ relodged time', 'Request notes',
-        'Request feedback code', 'Slot', 'Slot day', 
-        'Slot time', 'Slot disabled status', 'Unit code', 
-        'Unit title', 'Unit program', 'Feeback satisfaction', 
+        'Request feedback code', 'Slot', 'Slot day',
+        'Slot time', 'Slot disabled status', 'Unit code',
+        'Unit title', 'Unit program', 'Feeback satisfaction',
         'Feedback comment', 'Feedback made on'
     )
 
@@ -299,10 +299,10 @@ def generate_csv(request, rid=None):
     for request_item in request_items_dict['request_items']:
         row = [
             request_item['id'], request_item['text'], request_item['date_time'],
-            request_item['student']['id'], request_item['student']['name'], request_item['student']['phone'], 
-            request_item['dismissed'], request_item['dismiss_relodge_date_time'], request_item['description'], 
-            request_item['feedback_ref_code'], request_item['slot']['text'], request_item['slot']['day'], 
-            request_item['slot']['time'], request_item['slot']['disabled'], request_item['unit']['code'], 
+            request_item['student']['id'], request_item['student']['name'], request_item['student']['phone'],
+            request_item['dismissed'], request_item['dismiss_relodge_date_time'], request_item['description'],
+            request_item['feedback_ref_code'], request_item['slot']['text'], request_item['slot']['day'],
+            request_item['slot']['time'], request_item['slot']['disabled'], request_item['unit']['code'],
             request_item['unit']['title'], request_item['unit']['program'],
         ]
 
