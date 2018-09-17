@@ -144,11 +144,13 @@ def request_feedback(request, ref=None):
                     feedback_obj.request = request_obj
                     feedback_obj.locked = True
                     feedback_obj.save()
-                    submission_text = ('Your feedback for request id: {0} has been '
-                                       'submitted!').format(request_obj.pk)
 
-                    messages.success(request, 'Feedback submission successful!',
-                                     extra_tags=submission_text)
+                    message_title = 'Feedback submission successful!'
+                    message_text = ('Your feedback for reference code: {0} has been '
+                                    'submitted!').format(request_obj.feedback_ref)
+
+                    messages.success(request, message_title,
+                                     extra_tags=message_text)
 
             else:
                 form = FeedbackForm()
