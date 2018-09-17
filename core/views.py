@@ -225,15 +225,14 @@ def request_form(request):
 
         if form.is_valid():
             request_obj = form.save()
-            submission_text = ('Your tutor request has been '
-                               'submitted and will be reviewed shortly.<br/>'
-                               'Feedback reference code: <strong>{0}</strong><br/>'
-                               '<em>Make sure to attend the tutoring session on time.</em>').format(request_obj.feedback_ref)
+            message_title = 'Your session is confirmed! Make sure to attend the tutoring session on time.'
+            message_text = ('Your tutor request has been '
+                            'submitted and will be reviewed shortly.<br/>'
+                            'Feedback reference code: <strong>{0}</strong><br/>').format(request_obj.feedback_ref)
             # Reset the form.
             form = RequestForm()
 
-            messages.success(request, 'Request submission successful!',
-                             extra_tags=submission_text)
+            messages.success(request, message_title, extra_tags=message_text)
 
     else:
         form = RequestForm()
