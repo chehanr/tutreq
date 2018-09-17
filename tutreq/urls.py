@@ -36,4 +36,6 @@ urlpatterns = [
          name='request_info_json'),
     path('dismiss_relodge_request/', core_views.dismiss_relodge_request,
          name='dismiss_relodge_request'),
+    path('archive_unarchive_request/', core_views.archive_unarchive_request,
+         name='archive_unarchive_request'),
 ]
