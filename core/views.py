@@ -364,6 +364,34 @@ def dismiss_relodge_request(request):
 
 
 @staff_member_required
+def archive_unarchive_request(request):
+    """Json response to get request information and set archive/ unarchive info."""
+
+    request_id = request.GET.get('request-id')
+    status_code = 200
+
+    try:
+        request_obj = Request.objects.get(pk=request_id)
+        request_obj.archive_unarchive()
+
+        response_dict = {
+            'id': request_obj.pk,
+            'text': str(request_obj),
+            'archived': request_obj.archived,
+            'archive_unarchive_date_time': request_obj.archive_unarchive_date_time,
+        }
+
+    except ObjectDoesNotExist as err:
+        status_code = 400
+        response_dict = {
+            'request': None,
+            'error': str(err),
+        }
+
+    return JsonResponse(response_dict, status=status_code)
+
+
+@staff_member_required
 def request_info_json(request):
     """Json response to get request information."""
 
