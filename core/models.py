@@ -101,6 +101,8 @@ class Request(models.Model):
     dismissed = models.BooleanField(default=False)
     feedback_ref = models.CharField(
         max_length=10, unique=True, blank=True, null=True, default=ref_code_gen)
+    archived = models.BooleanField(default=False)
+    archive_unarchive_date_time = models.DateTimeField(blank=True, null=True)
 
     def dismiss_relodge(self):
         """ Dismiss or relodge a request. """
@@ -110,6 +112,17 @@ class Request(models.Model):
             self.dismissed = False
         else:
             self.dismissed = True
+
+        self.save()
+
+    def archive_unarchive(self):
+        """ Archive or unarchive a request. """
+
+        self.archive_unarchive_date_time = timezone.now()
+        if self.archived:
+            self.archived = False
+        else:
+            self.archived = True
 
         self.save()
 
