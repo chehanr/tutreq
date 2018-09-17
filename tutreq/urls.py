@@ -25,6 +25,7 @@ urlpatterns = [
     path('feedback/<str:ref>/', core_views.request_feedback,
          name='request_feedback'),
     path('manage/', core_views.requests_manage, name='requests_manage'),
+    path('manage/<str:view_type>/', core_views.requests_manage, name='requests_manage'),
     path('about/', core_views.about_page, name='about_page'),
 
     path('generate_pdf/', core_views.generate_pdf, name='generate_pdf'),

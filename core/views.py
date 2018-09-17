@@ -105,10 +105,27 @@ def get_request_items_dict(request_id=None):
 
 
 @staff_member_required
-def requests_manage(request):
+def requests_manage(request, view_type=None):
     """View for `requests_manage`."""
 
-    request_objs = Request.objects.all().order_by('dismissed', '-date_time')
+    if view_type == 'all':
+        request_objs = Request.objects.all().order_by('-date_time')
+    elif view_type == 'archive':
+        request_objs = Request.objects.filter(
+            archived=True).order_by('-date_time')
+    elif view_type == '!archive':
+        request_objs = Request.objects.filter(
+            archived=False).order_by('-date_time')
+    elif view_type == 'dismissed':
+        request_objs = Request.objects.filter(
+            dismissed=True).order_by('-date_time')
+    elif view_type == '!dismissed':
+        request_objs = Request.objects.filter(
+            dismissed=False).order_by('-date_time')
+    else:
+        request_objs = Request.objects.filter(
+            archived=False).order_by('dismissed', '-date_time')
+
     page = request.GET.get('page', 1)
     paginator = Paginator(request_objs, 10)
 
