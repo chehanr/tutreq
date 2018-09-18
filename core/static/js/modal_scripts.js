@@ -1,10 +1,45 @@
-"use strict";
+'use strict';
 
 jQuery(document).ready(function ($) {
+    var modalArchiveButton = document.getElementById('requestModalArchiveButton');
+    var modalDismissButton = document.getElementById('requestModalDismissButton');
+    var modalPDFButton = document.getElementById('requestModalPDFButton');
+
+    // Button to archive/ unarchive requests.
+    $(modalArchiveButton).on('click', function (event) {
+        event.preventDefault(); // To prevent following the link (optional)
+        var requestId = $(this).data('request-id');
+        var baseUrl = '/archive_unarchive_request/';
+        var dataDict = {
+            'request-id': requestId,
+        };
+        $.ajax({
+            type: 'GET',
+            url: baseUrl,
+            data: dataDict,
+            success: function (response) {
+                if (!jQuery.isEmptyObject(response)) {
+                    var requestId = response.id;
+                    var archived = response.archived;
+                    var archiveUnarchiveDateTime = response['archive_unarchive_date_time'];
+
+                    if (archived) {
+                        $(modalArchiveButton).text('Unarchive');
+                    } else {
+                        $(modalArchiveButton).text('Archive');
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                var errMsg = textStatus.concat(': ', errorThrown, '.');
+            }
+        });
+        return false;
+    });
     // Button to dismiss/ relodge requests.
-    $('#requestModalDismissButton').on('click', function (event) {
-        // event.preventDefault(); // To prevent following the link (optional)
-        var requestId = $(this).data("request-id");
+    $(modalDismissButton).on('click', function (event) {
+        event.preventDefault(); // To prevent following the link (optional)
+        var requestId = $(this).data('request-id');
         var baseUrl = '/dismiss_relodge_request/';
         var dataDict = {
             'request-id': requestId,
@@ -18,9 +53,9 @@ jQuery(document).ready(function ($) {
                     var requestId = response.id;
                     var dismissed = response.dismissed;
                     var dismissRelodgeDateTime = response['dismiss_relodge_date_time'];
+                    var tableRow = document.querySelector('[data-request-id=\"' + requestId + '\"]');
                     var modalRequestStatus = document.getElementById('requestInfoListItem3');
-                    var modalDismissButton = document.getElementById('requestModalDismissButton');
-                    var tableRequestStatusIcon = document.getElementById('tableRequestStatusIcon');
+                    var tableRequestStatusIcon = tableRow.querySelector('#tableRequestStatusIcon');
 
                     $(modalRequestStatus).removeClass(
                         'list-group-item-success list-group-item-danger');
@@ -45,9 +80,9 @@ jQuery(document).ready(function ($) {
         return false;
     });
     // Button to generate pdfs.
-    $('#requestModalPDFButton').on('click', function (event) {
-        // event.preventDefault(); // To prevent following the link (optional)
-        var requestId = $(this).data("request-id");
+    $(modalPDFButton).on('click', function (event) {
+        event.preventDefault(); // To prevent following the link (optional)
+        var requestId = $(this).data('request-id');
         var baseUrl = '/generate_pdf/';
         var dataDict = {
             'request-id': requestId,
@@ -59,12 +94,12 @@ jQuery(document).ready(function ($) {
             success: function (response, status, xhr) {
                 // https://stackoverflow.com/questions/16086162/handle-file-download-from-ajax-post
                 // check for a filename
-                var filename = "";
+                var filename = '';
                 var disposition = xhr.getResponseHeader('Content-Disposition');
                 if (disposition && disposition.indexOf('attachment') !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var filenameRegex = /filename[^;=\n]*=((['']).*?\2|[^;\n]*)/;
                     var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                    if (matches != null && matches[1]) filename = matches[1].replace(/['']/g, '');
                 }
 
                 var type = xhr.getResponseHeader('Content-Type');
@@ -73,7 +108,7 @@ jQuery(document).ready(function ($) {
                 });
 
                 if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                    // IE workaround for 'HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed.'
                     window.navigator.msSaveBlob(blob, filename);
                 } else {
                     var URL = window.URL || window.webkitURL;
@@ -81,7 +116,7 @@ jQuery(document).ready(function ($) {
 
                     if (filename) {
                         // use HTML5 a[download] attribute to specify filename
-                        var a = document.createElement("a");
+                        var a = document.createElement('a');
                         // safari doesn't support this yet
                         if (typeof a.download === 'undefined') {
                             window.location = downloadUrl;
@@ -107,8 +142,8 @@ jQuery(document).ready(function ($) {
         return false;
     });
     // Populate modal fields.
-    $(".clickable-row").click(function () {
-        var requestId = $(this).data("request-id");
+    $('.clickable-row').click(function () {
+        var requestId = $(this).data('request-id');
         var baseUrl = '/request_info_json/';
         var csrftoken = getCookie('csrftoken');
         var dataDict = {
@@ -137,6 +172,7 @@ jQuery(document).ready(function ($) {
                     else
                         $('#requestInfoListItem2').text('Notes: None');
 
+                    // Setting up the dismiss/ relodge stuff.
                     $('#requestInfoListItem3').removeClass(
                         'list-group-item-success list-group-item-danger');
                     if (request.dismissed) {
@@ -147,6 +183,13 @@ jQuery(document).ready(function ($) {
                         $('#requestInfoListItem3').addClass('list-group-item-danger');
                         $('#requestInfoListItem3').text('Request status: Waiting');
                         $('#requestModalDismissButton').text('Dismiss');
+                    }
+
+                    // Setting up the archive/ unarchive stuff.
+                    if (request.archived) {
+                        $('#requestModalArchiveButton').text('Unarchive');
+                    } else {
+                        $('#requestModalArchiveButton').text('Archive');
                     }
 
                     $('#feedbackInfoListItem0').text('Reference code: ' + request.feedback_ref_code);
@@ -188,10 +231,13 @@ jQuery(document).ready(function ($) {
 
                     // Setting data values for buttons.
                     $('#requestModalDismissButton').data({
-                        "request-id": requestId
+                        'request-id': requestId
                     });
                     $('#requestModalPDFButton').data({
-                        "request-id": requestId
+                        'request-id': requestId
+                    });
+                    $('#requestModalArchiveButton').data({
+                        'request-id': requestId
                     });
 
                     $('#requestModal').modal('toggle');
