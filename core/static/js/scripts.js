@@ -1,3 +1,5 @@
+"use strict";
+
 // TODO set bs select on window change.
 
 function handleSelectSlot(response) {
