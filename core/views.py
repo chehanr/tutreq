@@ -59,6 +59,8 @@ def get_request_item_dict(request_obj):
         'date_time': request_obj.date_time,
         'dismissed': request_obj.dismissed,
         'dismiss_relodge_date_time': request_obj.dismiss_relodge_date_time,
+        'archived': request_obj.archived,
+        'archive_unarchive_date_time': request_obj.archive_unarchive_date_time,
         'description': request_obj.description,
         'feedback_ref_code': request_obj.feedback_ref,
         'slot': {
