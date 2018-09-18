@@ -145,7 +145,6 @@ jQuery(document).ready(function ($) {
     $(".clickable-row").click(function () {
         var requestId = $(this).data("request-id");
         var baseUrl = "/request_info_json/";
-        var csrftoken = getCookie("csrftoken");
         var dataDict = {
             "request-id": requestId,
         };
