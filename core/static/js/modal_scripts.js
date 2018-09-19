@@ -5,6 +5,9 @@ jQuery(document).ready(function ($) {
     var modalDismissButton = document.getElementById("requestModalDismissButton");
     var modalPDFButton = document.getElementById("requestModalPDFButton");
 
+    var requestArchiveUnarchivMoment = null;
+    var requestDismissRelodgeMoment = null;
+
     // Button to archive/ unarchive requests.
     $(modalArchiveButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
@@ -21,12 +24,17 @@ jQuery(document).ready(function ($) {
                 if (!jQuery.isEmptyObject(response)) {
                     var requestId = response.id;
                     var archived = response.archived;
-                    var archiveUnarchiveDateTime = response["archive_unarchive_date_time"];
+                    var modalRequestArchivedStatus = document.getElementById("requestInfoArchivedStatus");
+
+                    requestArchiveUnarchivMoment = moment(response["archive_unarchive_date_time"]).format(
+                        "MMMM Do YYYY, h:mm:ss a");
 
                     if (archived) {
                         $(modalArchiveButton).text("Unarchive");
+                        $(modalRequestArchivedStatus).text("Archived");
                     } else {
                         $(modalArchiveButton).text("Archive");
+                        $(modalRequestArchivedStatus).text("");
                     }
                 }
             },
@@ -52,10 +60,12 @@ jQuery(document).ready(function ($) {
                 if (!jQuery.isEmptyObject(response)) {
                     var requestId = response.id;
                     var dismissed = response.dismissed;
-                    var dismissRelodgeDateTime = response["dismiss_relodge_date_time"];
                     var tableRow = document.querySelector("[data-request-id=\"" + requestId + "\"]");
                     var modalRequestStatus = document.getElementById("requestInfoListItem3");
                     var tableRequestStatusIcon = tableRow.querySelector("#tableRequestStatusIcon");
+
+                    requestDismissRelodgeMoment = moment(response["dismiss_relodge_date_time"]).format(
+                        "MMMM Do YYYY, h:mm:ss a");
 
                     $(modalRequestStatus).removeClass(
                         "list-group-item-success list-group-item-danger");
@@ -159,6 +169,11 @@ jQuery(document).ready(function ($) {
                 var slotNextDateTimeMoment = moment(request.slot["next_date_time"]).format(
                     "MMMM Do, YYYY");
 
+                requestArchiveUnarchivMoment = moment(request["archive_unarchive_date_time"]).format(
+                    "MMMM Do YYYY, h:mm:ss a");
+                requestDismissRelodgeMoment = moment(request["dismiss_relodge_date_time"]).format(
+                    "MMMM Do YYYY, h:mm:ss a");
+
                 if (!jQuery.isEmptyObject(request)) {
                     var request = response.request;
                     $("#requestModalLongTitle").text(request.text);
@@ -187,8 +202,10 @@ jQuery(document).ready(function ($) {
                     // Setting up the archive/ unarchive stuff.
                     if (request.archived) {
                         $("#requestModalArchiveButton").text("Unarchive");
+                        $("#requestInfoArchivedStatus").text("Archived");
                     } else {
                         $("#requestModalArchiveButton").text("Archive");
+                        $("#requestInfoArchivedStatus").text("");
                     }
 
                     $("#feedbackInfoListItem0").text("Reference code: " + request.feedback_ref_code);
@@ -229,13 +246,13 @@ jQuery(document).ready(function ($) {
                     $("#unitInfoListItem2").text("Program: " + request.unit.program);
 
                     // Setting data values for buttons.
-                    $("#requestModalDismissButton").data({
+                    $(modalDismissButton).data({
                         "request-id": requestId
                     });
-                    $("#requestModalPDFButton").data({
+                    $(modalPDFButton).data({
                         "request-id": requestId
                     });
-                    $("#requestModalArchiveButton").data({
+                    $(modalArchiveButton).data({
                         "request-id": requestId
                     });
 
