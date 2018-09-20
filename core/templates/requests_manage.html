@@ -3,7 +3,6 @@
 {% load humanize %}
 {% block title %}Manage requests{% endblock %}
 {% block scripts_header %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.3/css/bootstrap-select.min.css"> 
 {% endblock %} 
 {% block content %}
 <div class="row">
@@ -85,6 +84,6 @@
 </div>
 {% endblock %} 
 {% block scripts_footer %}
+<script src="{% static 'js/moment.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/modal_scripts.js' %}" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 {% endblock %}

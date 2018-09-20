@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block title %}Tutor request form{% endblock %}
 {% block scripts_header %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-select.min.css' %}">
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -66,34 +66,8 @@
 </div>
 {% endblock %}
 {% block scripts_footer %}
-<script type="text/javascript">
-    document.getElementById('id_slot').value = null; // Temp.
-    jQuery(document).ready(function ($) {
-        $('#selectUnit').on('changed.bs.select', function (e) {
-            var unitId = $(this).val();
-            var baseUrl = '/slots_info_json/';
-            var dataDict = {
-                'unit-id': unitId,
-            };
-            $.ajax({
-                type: 'GET',
-                url: baseUrl,
-                data: dataDict,
-                success: function (response) {
-                    if (!jQuery.isEmptyObject(response))
-                        handleSelectSlot(response);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    // var errMsg = textStatus.concat(': ', errorThrown, '.');
-                }
-            });
-            return false;
-        });
-    });
-</script>
-</script>
-<script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>
 <script src='https://www.google.com/recaptcha/api.js'></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
+<script src="{% static 'js/moment.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/scripts.js' %}" type="text/javascript"></script>
 {% endblock %}
