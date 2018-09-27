@@ -1,5 +1,17 @@
 "use strict";
 
+function setTableRequestStatusIcon(element, status) {
+    if (status) {
+        $(element).attr("src", dismissedIcon);
+        $(element).attr("alt", "Dismissed");
+        $(element).attr("title", "Dismissed");
+    } else {
+        $(element).attr("src", waitingIcon);
+        $(element).attr("alt", "Waiting");
+        $(element).attr("title", "Waiting");
+    }
+}
+
 jQuery(document).ready(function ($) {
     var modalArchiveButton = document.getElementById("requestModalArchiveButton");
     var modalDismissButton = document.getElementById("requestModalDismissButton");
@@ -31,10 +43,10 @@ jQuery(document).ready(function ($) {
 
                     if (archived) {
                         $(modalArchiveButton).text("Unarchive");
-                        $(modalRequestArchivedStatus).text("Archived");
+                        // $(modalRequestArchivedStatus).text("(Archived)");
                     } else {
                         $(modalArchiveButton).text("Archive");
-                        $(modalRequestArchivedStatus).text("");
+                        // $(modalRequestArchivedStatus).text("");
                     }
                 }
             },
@@ -69,17 +81,16 @@ jQuery(document).ready(function ($) {
 
                     $(modalRequestStatus).removeClass(
                         "list-group-item-success list-group-item-danger");
-                    $(tableRequestStatusIcon).removeClass();
                     if (dismissed) {
                         $(modalRequestStatus).addClass("list-group-item-success");
                         $(modalRequestStatus).text("Request status: Dismissed");
                         $(modalDismissButton).text("Relodge");
-                        $(tableRequestStatusIcon).addClass("glyphicon glyphicon-ok");
+                        setTableRequestStatusIcon(tableRequestStatusIcon, true);
                     } else {
                         $(modalRequestStatus).addClass("list-group-item-danger");
                         $(modalRequestStatus).text("Request status: Waiting");
                         $(modalDismissButton).text("Dismiss");
-                        $(tableRequestStatusIcon).addClass("glyphicon glyphicon-time");
+                        setTableRequestStatusIcon(tableRequestStatusIcon, false);
                     }
                 }
             },
@@ -202,16 +213,16 @@ jQuery(document).ready(function ($) {
                     // Setting up the archive/ unarchive stuff.
                     if (request.archived) {
                         $("#requestModalArchiveButton").text("Unarchive");
-                        $("#requestInfoArchivedStatus").text("Archived");
+                        // $("#requestInfoArchivedStatus").text("(Archived)");
                     } else {
                         $("#requestModalArchiveButton").text("Archive");
-                        $("#requestInfoArchivedStatus").text("");
+                        // $("#requestInfoArchivedStatus").text("");
                     }
 
                     $("#feedbackInfoListItem0").text("Reference code: " + request.feedback_ref_code);
                     if (!jQuery.isEmptyObject(request.feedback)) {
-                        $("#feedbackInfoListItem2").removeClass("hidden");
-                        $("#feedbackInfoListItem3").removeClass("hidden");
+                        $("#feedbackInfoListItem2").removeClass("d-none");
+                        $("#feedbackInfoListItem3").removeClass("d-none");
                         $("#feedbackInfoListItem1").text("Satisfaction level: " + request.feedback.satisfaction_val);
                         if (request.feedback.description)
                             $("#feedbackInfoListItem2").text("Comment: " + request.feedback.description);
@@ -221,8 +232,8 @@ jQuery(document).ready(function ($) {
                             "MMMM Do YYYY, h:mm:ss a"));
                     } else {
                         $("#feedbackInfoListItem1").text("No feedback");
-                        $("#feedbackInfoListItem2").addClass("hidden");
-                        $("#feedbackInfoListItem3").addClass("hidden");
+                        $("#feedbackInfoListItem2").addClass("d-none");
+                        $("#feedbackInfoListItem3").addClass("d-none");
                     }
 
                     $("#studentInfoListItem0").text("Student ID: " + request.student.id);
