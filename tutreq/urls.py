@@ -25,7 +25,8 @@ urlpatterns = [
     path('feedback/<str:ref>/', core_views.request_feedback,
          name='request_feedback'),
     path('manage/', core_views.requests_manage, name='requests_manage'),
-    path('manage/<str:view_type>/', core_views.requests_manage, name='requests_manage'),
+    path('manage/<str:view_type>/',
+         core_views.requests_manage, name='requests_manage'),
     path('about/', core_views.about_page, name='about_page'),
 
     path('generate_pdf/', core_views.generate_pdf, name='generate_pdf'),
@@ -39,4 +40,6 @@ urlpatterns = [
          name='dismiss_relodge_request'),
     path('archive_unarchive_request/', core_views.archive_unarchive_request,
          name='archive_unarchive_request'),
+    path('request_count_json/', core_views.request_count_json,
+         name='request_count_json'),
 ]

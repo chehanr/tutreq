@@ -483,3 +483,23 @@ def slots_info_json(request):
         }
 
     return JsonResponse(response_dict, status=status_code)
+
+
+def request_count_json(request):
+    """Json response to get request count."""
+
+    status_code = 200
+
+    request_obj_count = Request.objects.count()
+
+    if request_obj_count:
+        response_dict = {
+            'request_count': request_obj_count,
+        }
+    else:
+        status_code = 400
+        response_dict = {
+            'request_count': None,
+        }
+
+    return JsonResponse(response_dict, status=status_code)
