@@ -29,17 +29,14 @@
         <ul class="navbar-nav navbar-right">
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:logout' %}">
-                    Logout<img src="{% static 'icons/logout-variant.svg' %}" alt="Logout"></a>
+                <a class="nav-link" href="{% url 'admin:logout' %}">Logout</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">
-                    Admin<img src="{% static 'icons/wrench.svg' %}" alt="Admin"></a>
+                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
             </li>
             {% else %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:login' %}">
-                    Login<img src="{% static 'icons/login-variant.svg' %}" alt="Login"></a>
+                <a class="nav-link" href="{% url 'admin:login' %}">Login</a>
             </li>
             {% endif %}
         </ul>
