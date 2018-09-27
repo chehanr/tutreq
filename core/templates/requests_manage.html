@@ -3,6 +3,10 @@
 {% load humanize %}
 {% block title %}Manage requests{% endblock %}
 {% block scripts_header %}
+<script>
+    var dismissedIcon = "{% static 'icons/check.svg' %}";
+    var waitingIcon = "{% static 'icons/clock-outline.svg' %}";
+</script>
 {% endblock %}
 {% block content %}
 <div class="row">
