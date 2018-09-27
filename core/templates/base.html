@@ -16,7 +16,10 @@
 
 <body>
     <div class="container-fluid">
-        {% include '__layouts/nav_bar_main.html' %} {% block content %}{% endblock %}
+        {% include '__layouts/nav_bar_main.html' %}
+        <div id="mainContentContainer" class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
     </div>
     <script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
