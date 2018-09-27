@@ -1,53 +1,47 @@
 {% load staticfiles %}
-<div class="row">
-    <div class="col-md-12">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <!-- <a class="navbar-brand" href="#"> ACBT TutReq </a> -->
-                    <a href="#" class="navbar-left"><img class="navbar-logo" src="{% static 'img/acbt_logo.png' %}"></a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <li class="{% if nbar_active == 'request_form' %}active{% endif %}">
-                            <a href="{% url 'request_form' %}">Request</a>
-                        </li>
-                        <li class="{% if nbar_active == 'request_feedback' %}active{% endif %}">
-                            <a href="{% url 'request_feedback' %}">Feedback</a>
-                        </li>
-                        {% if user.is_authenticated %}
-                        <li class="{% if nbar_active == 'requests_manage' %}active{% endif %}">
-                            <a href="{% url 'requests_manage' %}">Manage</a>
-                        </li>
-                        {% endif %}
-                        <li class="{% if nbar_active == 'about_page' %}active{% endif %}">
-                            <a href="{% url 'about_page' %}">About</a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if user.is_authenticated %}
-                        <li>
-                            <a href="{% url 'admin:logout' %}">
-                                <span class="glyphicon glyphicon-log-out"></span> Logout </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'admin:index' %}">
-                                <span class="glyphicon glyphicon-wrench"></span> Admin </a>
-                        </li>
-                        {% else %}
-                        <li>
-                            <a href="{% url 'admin:login' %}">
-                                <span class="glyphicon glyphicon-log-in"></span> Login </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <img src="{% static 'img/acbt_logo.png' %}" width="auto" height="30px" class="d-inline-block align-top" alt="">
+        tutreq
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo" aria-controls="navbarTogglerDemo"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item {% if nbar_active == 'request_form' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'request_form' %}">Request</a>
+            </li>
+            <li class="nav-item {% if nbar_active == 'request_feedback' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'request_feedback' %}">Feedback</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item {% if nbar_active == 'requests_manage' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'requests_manage' %}">Manage</a>
+            </li>
+            {% endif %}
+            <li class="nav-item {% if nbar_active == 'about_page' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'about_page' %}">About</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:logout' %}">
+                    Logout<img src="{% static 'icons/logout-variant.svg' %}" alt="Logout"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:index' %}">
+                    Admin<img src="{% static 'icons/wrench.svg' %}" alt="Admin"></a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:login' %}">
+                    Login<img src="{% static 'icons/login-variant.svg' %}" alt="Login"></a>
+            </li>
+            {% endif %}
+        </ul>
     </div>
-</div>
+</nav>
