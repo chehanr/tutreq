@@ -34,7 +34,7 @@ jQuery(document).ready(function ($) {
             var nextDateTimeMoment = moment(slot["next_date_time"]).format("MMMM Do, YYYY");
 
             // Unhide the slot detail list. 
-            $("#slotDetailList").removeClass("collapse");
+            $("#slotDetailList").removeClass("d-none");
 
             $("#listItem0").text("Unit: " + slot.unit.code + " (" + slot.unit.title + ")");
             $("#listItem1").text("Course: " + slot.unit.course);
