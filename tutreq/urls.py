@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 
 import core.views as core_views
+import core.views_api as core_api_views
+import core.views_gen as core_gen_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,17 +31,18 @@ urlpatterns = [
          core_views.requests_manage, name='requests_manage'),
     path('about/', core_views.about_page, name='about_page'),
 
-    path('generate_pdf/', core_views.generate_pdf, name='generate_pdf'),
-    path('generate_csv/', core_views.generate_csv, name='generate_csv'),
-    path('generate_csv/<str:rid>/', core_views.generate_csv, name='generate_csv'),
+    path('generate_pdf/', core_gen_views.generate_pdf, name='generate_pdf'),
+    path('generate_csv/', core_gen_views.generate_csv, name='generate_csv'),
+    path('generate_csv/<str:rid>/',
+         core_gen_views.generate_csv, name='generate_csv'),
 
-    path('slots_info_json/', core_views.slots_info_json, name='slots_info_json'),
-    path('request_info_json/', core_views.request_info_json,
+    path('slots_info_json/', core_api_views.slots_info_json, name='slots_info_json'),
+    path('request_info_json/', core_api_views.request_info_json,
          name='request_info_json'),
-    path('dismiss_relodge_request/', core_views.dismiss_relodge_request,
+    path('dismiss_relodge_request/', core_api_views.dismiss_relodge_request,
          name='dismiss_relodge_request'),
-    path('archive_unarchive_request/', core_views.archive_unarchive_request,
+    path('archive_unarchive_request/', core_api_views.archive_unarchive_request,
          name='archive_unarchive_request'),
-    path('request_count_json/', core_views.request_count_json,
+    path('request_count_json/', core_api_views.request_count_json,
          name='request_count_json'),
 ]
