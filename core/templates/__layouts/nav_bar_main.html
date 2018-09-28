@@ -1,15 +1,15 @@
 {% load staticfiles %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="{% url 'request_form' %}">
         <img src="{% static 'img/acbt_logo.png' %}" width="auto" height="30px" class="d-inline-block align-top" alt="">
         tutreq
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo" aria-controls="navbarTogglerDemo"
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo">
+    <div class="collapse navbar-collapse" id="navbarToggler">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item {% if nbar_active == 'request_form' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'request_form' %}">Request</a>
