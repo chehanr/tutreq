@@ -9,15 +9,22 @@ from .constants import (AVAILABLE_TIMES, DAYS_OF_WEEK, PHONE_REGEX,
 
 
 def ref_code_gen():
-    while True:
-        from django.utils.crypto import get_random_string
-        from django.core.exceptions import ObjectDoesNotExist
+    """ Returns reference code with 8 alphanumeric chars. """
 
+    from django.utils.crypto import get_random_string
+    from django.core.exceptions import ObjectDoesNotExist
+
+    ref_code = None
+
+    while True:
         ref_code = get_random_string(length=8).upper()
+
         try:
             Request.objects.get(feedback_ref=ref_code)
         except ObjectDoesNotExist:
-            return ref_code
+            break
+
+    return ref_code
 
 
 # Create your models here.
