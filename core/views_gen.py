@@ -20,7 +20,7 @@ def generate_pdf(request):
 
     template = 'pdf_template.html'
     context = {'request': request_item, 'generated_date_time': gen_date_time}
-    pdf_filename = 'tutreq_request_{0}.pdf'.format(request_item['id'])
+    pdf_filename = 'tutreq_request_r-{}.pdf'.format(request_item['id'])
 
     return render_to_pdf_response(request, template, context, filename=pdf_filename)
 
