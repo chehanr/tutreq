@@ -1,69 +1,81 @@
 "use strict";
 
 jQuery(document).ready(function ($) {
+    var slotIdInput = $("#id_slot");
+    var selectUnitElement = $("#selectUnit");
+    var selectSlotElement = $("#selectSlot");
+    var slotDetailList = $("#slotDetailList");
+
+    // Clear value.
+    slotIdInput.val(null);
+
+    function populateSlotDetailList(slot) {
+        if (!$.isEmptyObject(slot)) {
+            var nextDateTimeMoment = moment(slot.next_date_time).format("MMMM Do, YYYY");
+            var slotDetailData = {
+                unitCodeTitle: "Unit: " + slot.unit.code + " (" + slot.unit.title + ")",
+                unitCourse: "Course: " + slot.unit.course,
+                slotDay: "Day: " + slot.day + " (" + nextDateTimeMoment + ")",
+                slotTime: "Time: " + slot.time
+            };
+
+            slotDetailList.removeClass("d-none");
+            slotDetailList.empty();
+
+            $.each(slotDetailData, function (key, value) {
+                $("<li />", {
+                    class: "list-group-item",
+                    text: value
+                }).appendTo(slotDetailList);
+            });
+        }
+    }
+
     function handleSelectSlot(response) {
-        var slots = response.slots;
-        var selectSlot = $("#selectSlot");
+        var slotsItems = response.slots;
 
-        // Hide the slot detail list. 
-        $("#slotDetailList").addClass("collapse");
+        slotDetailList.addClass("d-none");
+        selectSlotElement.empty();
 
-        selectSlot.empty();
-        document.getElementById("id_slot").value = null;
+        slotIdInput.val(null);
 
-        // Create the options list.
-        $.each(slots, function (index, value) {
-            selectSlot.append("<option value=\"" + index + "\" data-subtext=\"\">" + value.day + " (" + value.time + ") </option>");
+        $.each(slotsItems, function (index, value) {
+            var slotText = value.day + " (" + value.time + ")";
+
+            $("<option />", {
+                value: index,
+                text: slotText
+            }).appendTo(selectSlotElement);
         });
 
-        selectSlot.selectpicker("refresh");
-
-        selectSlot.on("changed.bs.select", function (e) {
+        selectSlotElement.selectpicker("refresh");
+        selectSlotElement.on("changed.bs.select", function () {
             var val = $(this).val();
-            var slot = slots[val];
+            var slot = slotsItems[val];
 
             if (slot) {
-                document.getElementById("id_slot").value = slot.id;
+                slotIdInput.val(slot.id);
                 populateSlotDetailList(slot);
             }
         });
     }
 
-    function populateSlotDetailList(slot) {
-        if (!jQuery.isEmptyObject(slot)) {
-            var nextDateTimeMoment = moment(slot["next_date_time"]).format("MMMM Do, YYYY");
-
-            // Unhide the slot detail list. 
-            $("#slotDetailList").removeClass("d-none");
-
-            $("#listItem0").text("Unit: " + slot.unit.code + " (" + slot.unit.title + ")");
-            $("#listItem1").text("Course: " + slot.unit.course);
-            $("#listItem2").text("Day: " + slot.day + " (" + nextDateTimeMoment + ")");
-            $("#listItem3").text("Time: " + slot.time);
-        }
-    }
-    // TODO set bs select on window change.
-    document.getElementById('id_slot').value = null; // Temp.
-    jQuery(document).ready(function ($) {
-        $('#selectUnit').on('changed.bs.select', function (e) {
-            var unitId = $(this).val();
-            var baseUrl = '/slots_info_json/';
-            var dataDict = {
-                'unit-id': unitId,
-            };
-            $.ajax({
-                type: 'GET',
-                url: baseUrl,
-                data: dataDict,
-                success: function (response) {
-                    if (!jQuery.isEmptyObject(response))
-                        handleSelectSlot(response);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    // var errMsg = textStatus.concat(': ', errorThrown, '.');
+    selectUnitElement.on("changed.bs.select", function () {
+        var unitId = $(this).val();
+        var baseUrl = "/slots_info_json/";
+        var dataDict = {
+            "unit-id": unitId
+        };
+        $.ajax({
+            type: "GET",
+            url: baseUrl,
+            data: dataDict,
+            success: function (response) {
+                if (!$.isEmptyObject(response)) {
+                    handleSelectSlot(response);
                 }
-            });
-            return false;
+            }
         });
+        return false;
     });
 });
