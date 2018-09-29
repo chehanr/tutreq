@@ -46,8 +46,9 @@
                                     {% for course in select_items.courses %}
                                     <optgroup label="{{ course.title }}">
                                         {% for unit in course.units %}
-                                        <option value="{{ unit.id }}" {% if not unit.has_slots %}disabled{% endif %}>{{
-                                            unit.code }} ({{ unit.title }})</option>
+                                        <option value="{{ unit.id }}" {% if not unit.has_slots %}disabled{% endif %}>
+                                            {{unit.code}} ({{ unit.title }})
+                                        </option>
                                         {% endfor %}
                                     </optgroup>
                                     {% endfor %}
