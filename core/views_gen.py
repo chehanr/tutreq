@@ -38,10 +38,11 @@ class Buffer:
 
 
 @staff_member_required
-def generate_csv(request, rid=None):
-    """Generates a csv file with all (or specific `rid`) request object(s)."""
+def generate_csv(request):
+    """Generates a csv file with all (or specific `request_id`) request object(s)."""
 
-    request_items_dict = get_request_items_dict(rid)
+    request_id = request.GET.get('request-id')
+    request_items_dict = get_request_items_dict(request_id)
     rows = []
 
     row_header = (
@@ -85,8 +86,8 @@ def generate_csv(request, rid=None):
                                      content_type="text/csv")
 
     csv_filename = 'tutreq_log.csv'
-    if rid:
-        csv_filename = 'tutreq_log_r-{}.csv'.format(rid)
+    if request_id:
+        csv_filename = 'tutreq_log_r-{}.csv'.format(request_id)
 
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(
         csv_filename)

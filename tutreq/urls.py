@@ -33,8 +33,6 @@ urlpatterns = [
 
     path('generate_pdf/', core_gen_views.generate_pdf, name='generate_pdf'),
     path('generate_csv/', core_gen_views.generate_csv, name='generate_csv'),
-    path('generate_csv/<str:rid>/',
-         core_gen_views.generate_csv, name='generate_csv'),
 
     path('slots_info_json/', core_api_views.slots_info_json, name='slots_info_json'),
     path('request_info_json/', core_api_views.request_info_json,
