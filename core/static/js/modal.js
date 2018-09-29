@@ -1,24 +1,30 @@
 "use strict";
 
-function setTableRequestStatusIcon(element, status) {
-    if (status) {
-        $(element).attr("src", dismissedIcon);
-        $(element).attr("alt", "Dismissed");
-        $(element).attr("title", "Dismissed");
-    } else {
-        $(element).attr("src", waitingIcon);
-        $(element).attr("alt", "Waiting");
-        $(element).attr("title", "Waiting");
-    }
-}
-
 jQuery(document).ready(function ($) {
-    var modalArchiveButton = document.getElementById("requestModalArchiveButton");
-    var modalDismissButton = document.getElementById("requestModalDismissButton");
-    var modalPDFButton = document.getElementById("requestModalPDFButton");
+    var manageCSVLogButton = $("#manageCSVLogButton");
+    var modalArchiveButton = $("#requestModalArchiveButton");
+    var modalDismissButton = $("#requestModalDismissButton");
+    var modalPDFButton = $("#requestModalPDFButton");
 
     var requestArchiveUnarchivMoment = null;
     var requestDismissRelodgeMoment = null;
+
+    manageCSVLogButton.click(function (e) {
+        e.preventDefault();
+        window.location = "../generate_csv/";
+    });
+
+    function setTableRequestStatusIcon(element, status) {
+        if (status) {
+            $(element).attr("src", dismissedIcon);
+            $(element).attr("alt", "Dismissed");
+            $(element).attr("title", "Dismissed");
+        } else {
+            $(element).attr("src", waitingIcon);
+            $(element).attr("alt", "Waiting");
+            $(element).attr("title", "Waiting");
+        }
+    }
 
     // Button to archive/ unarchive requests.
     $(modalArchiveButton).on("click", function (event) {
@@ -26,20 +32,20 @@ jQuery(document).ready(function ($) {
         var requestId = $(this).data("request-id");
         var baseUrl = "/archive_unarchive_request/";
         var dataDict = {
-            "request-id": requestId,
+            "request-id": requestId
         };
+
         $.ajax({
             type: "GET",
             url: baseUrl,
             data: dataDict,
             success: function (response) {
-                if (!jQuery.isEmptyObject(response)) {
-                    var requestId = response.id;
+                if (!$.isEmptyObject(response)) {
+                    requestId = response.id;
                     var archived = response.archived;
-                    var modalRequestArchivedStatus = document.getElementById("requestInfoArchivedStatus");
+                    // var modalRequestArchivedStatus = document.getElementById("requestInfoArchivedStatus");
 
-                    requestArchiveUnarchivMoment = moment(response["archive_unarchive_date_time"]).format(
-                        "MMMM Do YYYY, h:mm:ss a");
+                    requestArchiveUnarchivMoment = moment(response.archive_unarchive_date_time).format("MMMM Do YYYY, h:mm:ss a");
 
                     if (archived) {
                         $(modalArchiveButton).text("Unarchive");
@@ -49,38 +55,35 @@ jQuery(document).ready(function ($) {
                         // $(modalRequestArchivedStatus).text("");
                     }
                 }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                var errMsg = textStatus.concat(": ", errorThrown, ".");
             }
         });
         return false;
     });
+
     // Button to dismiss/ relodge requests.
     $(modalDismissButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
         var requestId = $(this).data("request-id");
         var baseUrl = "/dismiss_relodge_request/";
         var dataDict = {
-            "request-id": requestId,
+            "request-id": requestId
         };
+
         $.ajax({
             type: "GET",
             url: baseUrl,
             data: dataDict,
             success: function (response) {
-                if (!jQuery.isEmptyObject(response)) {
-                    var requestId = response.id;
+                if (!$.isEmptyObject(response)) {
+                    requestId = response.id;
                     var dismissed = response.dismissed;
                     var tableRow = document.querySelector("[data-request-id=\"" + requestId + "\"]");
-                    var modalRequestStatus = document.getElementById("requestInfoListItem3");
+                    var modalRequestStatus = $("#requestInfoListItem3");
                     var tableRequestStatusIcon = tableRow.querySelector("#tableRequestStatusIcon");
 
-                    requestDismissRelodgeMoment = moment(response["dismiss_relodge_date_time"]).format(
-                        "MMMM Do YYYY, h:mm:ss a");
+                    requestDismissRelodgeMoment = moment(response.dismiss_relodge_date_time).format("MMMM Do YYYY, h:mm:ss a");
 
-                    $(modalRequestStatus).removeClass(
-                        "list-group-item-success list-group-item-danger");
+                    $(modalRequestStatus).removeClass("list-group-item-success list-group-item-danger");
                     if (dismissed) {
                         $(modalRequestStatus).addClass("list-group-item-success");
                         $(modalRequestStatus).text("Request status: Dismissed");
@@ -93,34 +96,34 @@ jQuery(document).ready(function ($) {
                         setTableRequestStatusIcon(tableRequestStatusIcon, false);
                     }
                 }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                var errMsg = textStatus.concat(": ", errorThrown, ".");
             }
         });
         return false;
     });
+
     // Button to generate pdfs.
     $(modalPDFButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
         var requestId = $(this).data("request-id");
         var baseUrl = "/generate_pdf/";
         var dataDict = {
-            "request-id": requestId,
+            "request-id": requestId
         };
+
         $.ajax({
             type: "GET",
             url: baseUrl,
             data: dataDict,
             success: function (response, status, xhr) {
                 // https://stackoverflow.com/questions/16086162/handle-file-download-from-ajax-post
-                // check for a filename
                 var filename = "";
                 var disposition = xhr.getResponseHeader("Content-Disposition");
                 if (disposition && disposition.indexOf("attachment") !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=(([""]).*?\2|[^;\n]*)/;
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                     var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1]) filename = matches[1].replace(/[""]/g, "");
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
                 }
 
                 var type = xhr.getResponseHeader("Content-Type");
@@ -138,7 +141,7 @@ jQuery(document).ready(function ($) {
                     if (filename) {
                         // use HTML5 a[download] attribute to specify filename
                         var a = document.createElement("a");
-                        // safari doesn"t support this yet
+                        // safari doesn't support this yet
                         if (typeof a.download === "undefined") {
                             window.location = downloadUrl;
                         } else {
@@ -155,51 +158,46 @@ jQuery(document).ready(function ($) {
                         URL.revokeObjectURL(downloadUrl);
                     }, 100); // cleanup
                 }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                // var errMsg = textStatus.concat(": ", errorThrown, ".");
             }
         });
         return false;
     });
+
     // Populate modal fields.
     $(".clickable-row").click(function () {
         var requestId = $(this).data("request-id");
         var baseUrl = "/request_info_json/";
         var dataDict = {
-            "request-id": requestId,
+            "request-id": requestId
         };
+
         $.ajax({
             type: "GET",
             url: baseUrl,
             data: dataDict,
             success: function (response) {
                 var request = response.request;
-                var requestDateTimeMoment = moment(request["date_time"]).format(
-                    "MMMM Do YYYY, h:mm:ss a");
-                var slotNextDateTimeMoment = moment(request.slot["next_date_time"]).format(
-                    "MMMM Do, YYYY");
+                var requestDateTimeMoment = moment(request.date_time).format("MMMM Do YYYY, h:mm:ss a");
+                var slotNextDateTimeMoment = moment(request.slot.next_date_time).format("MMMM Do, YYYY");
 
-                requestArchiveUnarchivMoment = moment(request["archive_unarchive_date_time"]).format(
-                    "MMMM Do YYYY, h:mm:ss a");
-                requestDismissRelodgeMoment = moment(request["dismiss_relodge_date_time"]).format(
-                    "MMMM Do YYYY, h:mm:ss a");
+                requestArchiveUnarchivMoment = moment(request.archive_unarchive_date_time).format("MMMM Do YYYY, h:mm:ss a");
+                requestDismissRelodgeMoment = moment(request.dismiss_relodge_date_time).format("MMMM Do YYYY, h:mm:ss a");
 
-                if (!jQuery.isEmptyObject(request)) {
-                    var request = response.request;
+                if (!$.isEmptyObject(request)) {
+                    request = response.request;
+
                     $("#requestModalLongTitle").text(request.text);
 
                     $("#requestInfoListItem0").text("Request ID: " + request.id);
-                    $("#requestInfoListItem1").text("Requested on: " +
-                        requestDateTimeMoment);
-                    if (request.description)
+                    $("#requestInfoListItem1").text("Requested on: " + requestDateTimeMoment);
+                    if (request.description) {
                         $("#requestInfoListItem2").text("Notes: " + request.description);
-                    else
+                    } else {
                         $("#requestInfoListItem2").text("Notes: None");
+                    }
 
                     // Setting up the dismiss/ relodge stuff.
-                    $("#requestInfoListItem3").removeClass(
-                        "list-group-item-success list-group-item-danger");
+                    $("#requestInfoListItem3").removeClass("list-group-item-success list-group-item-danger");
                     if (request.dismissed) {
                         $("#requestInfoListItem3").addClass("list-group-item-success");
                         $("#requestInfoListItem3").text("Request status: Dismissed");
@@ -220,16 +218,16 @@ jQuery(document).ready(function ($) {
                     }
 
                     $("#feedbackInfoListItem0").text("Reference code: " + request.feedback_ref_code);
-                    if (!jQuery.isEmptyObject(request.feedback)) {
+                    if (!$.isEmptyObject(request.feedback)) {
                         $("#feedbackInfoListItem2").removeClass("d-none");
                         $("#feedbackInfoListItem3").removeClass("d-none");
                         $("#feedbackInfoListItem1").text("Satisfaction level: " + request.feedback.satisfaction_val);
-                        if (request.feedback.description)
+                        if (request.feedback.description) {
                             $("#feedbackInfoListItem2").text("Comment: " + request.feedback.description);
-                        else
+                        } else {
                             $("#feedbackInfoListItem2").text("Comment: None");
-                        $("#feedbackInfoListItem3").text("Made on: " + moment(request.feedback.date_time).format(
-                            "MMMM Do YYYY, h:mm:ss a"));
+                        }
+                        $("#feedbackInfoListItem3").text("Made on: " + moment(request.feedback.date_time).format("MMMM Do YYYY, h:mm:ss a"));
                     } else {
                         $("#feedbackInfoListItem1").text("No feedback");
                         $("#feedbackInfoListItem2").addClass("d-none");
@@ -238,11 +236,9 @@ jQuery(document).ready(function ($) {
 
                     $("#studentInfoListItem0").text("Student ID: " + request.student.id);
                     $("#studentInfoListItem1").text("Name: " + request.student.name);
-                    $("#studentInfoListItem2").text("Contact number: " + request.student
-                        .phone);
+                    $("#studentInfoListItem2").text("Contact number: " + request.student.phone);
 
-                    $("#slotInfoListItem0").text("Day: " + request.slot.day + " (Next available: " +
-                        slotNextDateTimeMoment + ")");
+                    $("#slotInfoListItem0").text("Day: " + request.slot.day + " (Next available: " + slotNextDateTimeMoment + ")");
                     $("#slotInfoListItem1").text("Time slot: " + request.slot.time);
                     if (request.slot.disabled) {
                         $("#slotInfoListItem2").addClass("list-group-item-danger");
@@ -269,9 +265,6 @@ jQuery(document).ready(function ($) {
 
                     $("#requestModal").modal("toggle");
                 }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                var errMsg = textStatus.concat(": ", errorThrown, ".");
             }
         });
     });
