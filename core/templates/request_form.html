@@ -41,10 +41,21 @@
                                 <p>Select a tutoring session:</p>
                             </div>
                             <div class="col-md-6">
-                                {% include '__items/select_units.html' %}
+                                <select id="selectUnit" title="Select a unit" class="selectpicker" data-style=""
+                                    data-width="100%" data-size="5" data-dropup-auto="false">
+                                    {% for course in select_items.courses %}
+                                    <optgroup label="{{ course.title }}">
+                                        {% for unit in course.units %}
+                                        <option value="{{ unit.id }}" {% if not unit.has_slots %}disabled{% endif %}>{{
+                                            unit.code }} ({{ unit.title }})</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                {% include '__items/select_slots.html' %}
+                                <select id="selectSlot" title="Select a slot" class="selectpicker" data-style=""
+                                    data-width="100%" data-size="10" data-dropup-auto="false"></select>
                             </div>
                         </div>
                         <div class="row">
