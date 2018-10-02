@@ -110,21 +110,7 @@ def request_form(request):
 
     unit_objs = Unit.objects.all().order_by('course')
 
-    # TODO Find a cleaner way.
     course_items = {'courses': []}
-
-    for unit_obj in unit_objs:
-        course_title = unit_obj.course.title
-
-        course_item = {
-            'title': course_title,
-            'units': [],
-        }
-
-        course_items['courses'].append(course_item)
-
-    course_items['courses'] = list(
-        {item['title']: item for item in course_items['courses']}.values())
 
     for unit_obj in unit_objs:
         unit_id = unit_obj.pk
@@ -136,12 +122,19 @@ def request_form(request):
         if Slot.objects.filter(unit=unit_id):
             has_slots = True
 
+        course_item = {
+            'title': course_title,
+            'units': [],
+        }
+
         unit_item = {
             'id': unit_id,
             'title': unit_title,
             'code': unit_code,
             'has_slots': has_slots,
         }
+
+        course_items['courses'].append(course_item)
 
         for course_item in course_items['courses']:
             if course_item['title'] == course_title:
