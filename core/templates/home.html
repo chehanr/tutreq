@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}ACBT tutorial request{% endblock %}
+{% block title %}tutreq | ACBT tutorial request{% endblock %}
 {% block scripts_header %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-select.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/odometer-theme-minimal.css' %}">
@@ -87,9 +87,125 @@
 {% endblock %}
 {% block scripts_footer %}
 <script src='https://www.google.com/recaptcha/api.js'></script>
-<script src="{% static 'js/moment.min.js' %}" type="text/javascript"></script>
+<script src="https://unpkg.com/dayjs"></script>
+<script src="https://unpkg.com/dayjs/plugin/advancedFormat"></script>
+<script>
+    dayjs.extend(dayjs_plugin_advancedFormat);
+</script>
 <script src="{% static 'js/bootstrap-select.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/odometer.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/slots.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/live_count.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        let slotIdInpt = $("#id_slot"); //Hidden field in form.
+        let selectUnitElmt = $("#selectUnit");
+        let selectSlotElmt = $("#selectSlot");
+        let slotDetailListElmt = $("#slotDetailList");
+        let liveRequestCountElement = $("#liveRequestCount");
+
+        // Clear value.
+        $(slotIdInpt).val(null);
+        // Disable the slot select onload.
+        $(selectSlotElmt).prop("disabled", true);
+
+        function populateSlotDetailList(slot) {
+            if (!$.isEmptyObject(slot)) {
+                let nextDateTime = dayjs(slot.next_date_time).format("MMMM Do, YYYY");
+                let slotDetailData = {
+                    unit: `Unit: ${slot.unit.code} (${slot.unit.title})`,
+                    course: `Course: ${slot.unit.course}`,
+                    day: `Day: ${slot.day} (${nextDateTime})`,
+                    time: `Time: ${slot.time}`,
+                };
+
+                $(slotDetailListElmt).removeClass("d-none");
+                $(slotDetailListElmt).empty();
+
+                $.each(slotDetailData, function (key, value) {
+                    $("<li />", {
+                        class: "list-group-item",
+                        text: value
+                    }).appendTo(slotDetailListElmt);
+                });
+            }
+        }
+
+        function handleSelectSlot(response) {
+            let slotsItems = response.slots;
+
+            $(slotDetailListElmt).addClass("d-none");
+            $(selectSlotElmt).empty();
+
+            $(slotIdInpt).val(null);
+
+            $.each(slotsItems, function (index, value) {
+                let slotText = `${value.day} (${value.time})`;
+
+                $("<option />", {
+                    value: index,
+                    text: slotText
+                }).appendTo(selectSlotElmt);
+            });
+
+            $(selectSlotElmt).selectpicker("refresh");
+            $(selectSlotElmt).on("changed.bs.select", function () {
+                let val = $(this).val();
+                let slot = slotsItems[val];
+
+                if (slot) {
+                    slotIdInpt.val(slot.id);
+                    populateSlotDetailList(slot);
+                }
+            });
+        }
+
+        $(selectUnitElmt).on("changed.bs.select", function () {
+            let unitId = $(this).val();
+            let baseUrl = "{% url 'ajax_slots_info' %}";
+            let dataDict = {
+                "unit-id": unitId
+            };
+
+            $.ajax({
+                type: "GET",
+                url: baseUrl,
+                data: dataDict,
+                beforeSend: function () {
+                    $(selectSlotElmt).prop("disabled", false);
+                },
+                success: function (response) {
+                    if (!$.isEmptyObject(response)) {
+                        handleSelectSlot(response);
+                    }
+                },
+                error: function () {
+                    $(selectSlotElmt).prop("disabled", true);
+                }
+            });
+        });
+
+        function setLiveCount() {
+            let baseUrl = "{% url 'ajax_request_count' %}";
+            var count = 0;
+
+            $.ajax({
+                type: "GET",
+                url: baseUrl,
+                success: function (response) {
+                    if (!$.isEmptyObject(response)) {
+                        count = response.request_count;
+                    }
+                },
+                complete: function () {
+                    $(liveRequestCountElement).text(count);
+                }
+            });
+        }
+
+        setLiveCount();
+            
+        setInterval(function () {
+            setLiveCount();
+        }, 100000);
+    });
+</script>
 {% endblock %}
