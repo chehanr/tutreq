@@ -66,7 +66,7 @@ def archive_unarchive_request(request):
 
 
 @staff_member_required
-def request_info_json(request):
+def request_info(request):
     """Json response to get request information."""
 
     request_id = request.GET.get('request-id')
@@ -89,7 +89,7 @@ def request_info_json(request):
     return JsonResponse(response_dict, status=status_code)
 
 
-def slots_info_json(request):
+def slots_info(request):
     """Json response to get slot information."""
 
     unit_id = request.GET.get('unit-id')
@@ -138,7 +138,7 @@ def slots_info_json(request):
     return JsonResponse(response_dict, status=status_code)
 
 
-def request_count_json(request):
+def request_count(request):
     """Json response to get request count."""
 
     status_code = 200

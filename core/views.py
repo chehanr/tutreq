@@ -9,12 +9,10 @@ from .models import Feedback, Request, Slot, Unit
 
 # Create your views here.
 
-# Non-view methods:
-
 
 @staff_member_required
-def requests_manage(request, view_type=None):
-    """View for `requests_manage`."""
+def manage(request, view_type=None):
+    """View for `manage`."""
 
     if view_type == 'all':
         request_objs = Request.objects.all().order_by('-date_time')
@@ -44,12 +42,12 @@ def requests_manage(request, view_type=None):
     except EmptyPage:
         requests = paginator.page(paginator.num_pages)
 
-    return render(request, 'requests_manage.html', {'requests': requests,
-                                                    'nbar_active': 'requests_manage', })
+    return render(request, 'manage.html', {'requests': requests,
+                                           'nbar_active': 'manage', })
 
 
-def request_feedback(request, ref=None):
-    """View for `request_feedback`."""
+def feedback(request, ref=None):
+    """View for `feedback`."""
 
     if ref:
         ref = ref.upper()
@@ -80,13 +78,13 @@ def request_feedback(request, ref=None):
             else:
                 form = FeedbackForm()
 
-            return render(request, 'request_feedback.html', {'form': form,
-                                                             'form_method': 'post',
-                                                             'form_submit_button': 'Submit feedback',
-                                                             'nbar_active': 'request_feedback', })
+            return render(request, 'feedback.html', {'form': form,
+                                                     'form_method': 'post',
+                                                     'form_submit_button': 'Submit feedback',
+                                                     'nbar_active': 'feedback', })
         else:
             # TODO show locked msg.
-            return redirect('request_feedback')
+            return redirect('feedback')
 
     else:
         if request.method == 'GET':
@@ -94,19 +92,19 @@ def request_feedback(request, ref=None):
 
             if form.is_valid():
                 feedback_ref = form.cleaned_data.get('reference_code')
-                return redirect('request_feedback', ref=feedback_ref)
+                return redirect('feedback', ref=feedback_ref)
 
         else:
             form = RequestFeedbackRefField()
 
-        return render(request, 'request_feedback.html', {'form': form,
-                                                         'form_method': 'get',
-                                                         'form_submit_button': 'Find',
-                                                         'nbar_active': 'request_feedback', })
+        return render(request, 'feedback.html', {'form': form,
+                                                 'form_method': 'get',
+                                                 'form_submit_button': 'Find',
+                                                 'nbar_active': 'feedback', })
 
 
-def request_form(request):
-    """View for `request_form`."""
+def home(request):
+    """View for `home`."""
 
     unit_objs = Unit.objects.all().order_by('course')
 
@@ -157,12 +155,12 @@ def request_form(request):
     else:
         form = RequestForm()
 
-    return render(request, 'request_form.html', {'form': form,
-                                                 'select_items': course_items,
-                                                 'nbar_active': 'request_form', })
+    return render(request, 'home.html', {'form': form,
+                                         'select_items': course_items,
+                                         'nbar_active': 'home', })
 
 
-def about_page(request):
+def about(request):
     """Displays a static about page."""
 
-    return render(request, 'about_page.html', {'nbar_active': 'about_page', })
+    return render(request, 'about.html', {'nbar_active': 'about', })

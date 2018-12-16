@@ -8,15 +8,15 @@ jQuery(document).ready(function ($) {
     }
 
     function setLiveCount() {
-        var baseUrl = '/request_count_json/';
+        var baseUrl = "{% url 'ajax_request_count' %}";
         var count = 0;
 
         $.ajax({
-            type: 'GET',
+            type: "GET",
             url: baseUrl,
             success: function (response) {
                 if (!$.isEmptyObject(response)) {
-                    count = response["request_count"];
+                    count = response.request_count;
                 }
                 setLiveCountElement(count);
             },

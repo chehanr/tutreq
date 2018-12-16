@@ -11,7 +11,7 @@ jQuery(document).ready(function ($) {
 
     manageCSVLogButton.click(function (e) {
         e.preventDefault();
-        window.location = "../generate_csv/";
+        window.location = "{% url 'generate_csv' %}";
     });
 
     function setTableRequestStatusIcon(element, status) {
@@ -30,7 +30,7 @@ jQuery(document).ready(function ($) {
     $(modalArchiveButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
         var requestId = $(this).data("request-id");
-        var baseUrl = "/archive_unarchive_request/";
+        var baseUrl = "{% url 'ajax_archive_unarchive_request' %}";
         var dataDict = {
             "request-id": requestId
         };
@@ -64,7 +64,7 @@ jQuery(document).ready(function ($) {
     $(modalDismissButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
         var requestId = $(this).data("request-id");
-        var baseUrl = "/dismiss_relodge_request/";
+        var baseUrl = "{% url 'ajax_dismiss_relodge_request' %}";
         var dataDict = {
             "request-id": requestId
         };
@@ -105,7 +105,7 @@ jQuery(document).ready(function ($) {
     $(modalPDFButton).on("click", function (event) {
         event.preventDefault(); // To prevent following the link (optional)
         var requestId = $(this).data("request-id");
-        var baseUrl = "/generate_pdf/";
+        var baseUrl = "{% url 'generate_pdf' %}";
         var dataDict = {
             "request-id": requestId
         };
@@ -166,7 +166,7 @@ jQuery(document).ready(function ($) {
     // Populate modal fields.
     $(".clickable-row").click(function () {
         var requestId = $(this).data("request-id");
-        var baseUrl = "/request_info_json/";
+        var baseUrl = "{% url 'ajax_request_info' %}";
         var dataDict = {
             "request-id": requestId
         };

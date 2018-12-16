@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'request_form' %}">
+    <a class="navbar-brand" href="{% url 'home' %}">
         <img src="{% static 'img/acbt_logo.png' %}" width="auto" height="30px" class="d-inline-block align-top" alt="ACBT">
         tutreq
     </a>
@@ -11,19 +11,19 @@
 
     <div class="collapse navbar-collapse" id="navbarToggler">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item {% if nbar_active == 'request_form' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'request_form' %}">Request</a>
+            <li class="nav-item {% if nbar_active == 'home' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'home' %}">Request</a>
             </li>
-            <li class="nav-item {% if nbar_active == 'request_feedback' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'request_feedback' %}">Feedback</a>
+            <li class="nav-item {% if nbar_active == 'feedback' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'feedback' %}">Feedback</a>
             </li>
             {% if user.is_authenticated %}
-            <li class="nav-item {% if nbar_active == 'requests_manage' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'requests_manage' %}">Manage</a>
+            <li class="nav-item {% if nbar_active == 'manage' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'manage' %}">Manage</a>
             </li>
             {% endif %}
-            <li class="nav-item {% if nbar_active == 'about_page' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'about_page' %}">About</a>
+            <li class="nav-item {% if nbar_active == 'about' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'about' %}">About</a>
             </li>
         </ul>
         <ul class="navbar-nav navbar-right">

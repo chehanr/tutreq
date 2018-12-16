@@ -16,31 +16,33 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-import core.views as core_views
-import core.views_api as core_api_views
-import core.views_gen as core_gen_views
+import core.views as views
+import core.views_ajax as ajax_views
+import core.views_gen as gen_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', core_views.request_form, name='request_form'),
-    path('feedback/', core_views.request_feedback, name='request_feedback'),
-    path('feedback/<str:ref>/', core_views.request_feedback,
-         name='request_feedback'),
-    path('manage/', core_views.requests_manage, name='requests_manage'),
-    path('manage/<str:view_type>/',
-         core_views.requests_manage, name='requests_manage'),
-    path('about/', core_views.about_page, name='about_page'),
 
-    path('generate_pdf/', core_gen_views.generate_pdf, name='generate_pdf'),
-    path('generate_csv/', core_gen_views.generate_csv, name='generate_csv'),
+    path('', views.home, name='home'),
 
-    path('slots_info_json/', core_api_views.slots_info_json, name='slots_info_json'),
-    path('request_info_json/', core_api_views.request_info_json,
-         name='request_info_json'),
-    path('dismiss_relodge_request/', core_api_views.dismiss_relodge_request,
-         name='dismiss_relodge_request'),
-    path('archive_unarchive_request/', core_api_views.archive_unarchive_request,
+    path('feedback/', views.feedback, name='feedback'),
+    path('feedback/<str:ref>/', views.feedback, name='feedback'),
+
+    path('manage/', views.manage, name='manage'),
+    path('manage/<str:view_type>/', views.manage, name='manage'),
+
+    path('about/', views.about, name='about'),
+
+    path('gen/pdf/', gen_views.generate_pdf, name='generate_pdf'),
+    path('gen/csv/', gen_views.generate_csv, name='generate_csv'),
+
+    path('ajax/slots_info/', ajax_views.slots_info, name='ajax_slots_info'),
+    path('ajax/request_info/', ajax_views.request_info,
+         name='ajax_request_info'),
+    path('ajax/request_count/', ajax_views.request_count,
+         name='ajax_request_count'),
+    path('ajax/dismiss_relodge_request/', ajax_views.dismiss_relodge_request,
+         name='ajax_dismiss_relodge_request'),
+    path('ajax/ajax_archive_unarchive_request/', ajax_views.archive_unarchive_request,
          name='archive_unarchive_request'),
-    path('request_count_json/', core_api_views.request_count_json,
-         name='request_count_json'),
 ]
