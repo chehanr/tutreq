@@ -12,15 +12,16 @@
         <p>Lodge or dislodge requests and download logs.</p>
     </div>
     <div class="side-bar">
-        <form class="search-form" id="searchForm" method="GET" novalidate="novalidate">
+        <form class="search-form" id="searchForm" method="GET">
             <small id="form-hint-text">Search for records.</small>
             <div class="form-element">
-                <input type="text" id="searchInpt" name="query" placeholder="Search..." autocomplete="off" spellcheck="false">
+                <input type="text" id="searchInpt" name="query" placeholder="Search..." required="required"
+                    autocomplete="off" spellcheck="false">
             </div>
             <div class="form-element">
                 <label for="searchTypeSlt">Search for</label>
                 <select id="searchTypeSlt" name="type">
-                    <option value="student">Students</option>
+                    <option value="student" selected="selected">Students</option>
                     <option value="unit">Units</option>
                     <option value="feedback_ref">Feedback reference codes</option>
                 </select>
