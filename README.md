@@ -30,7 +30,7 @@ Rename `.env.sample` to `.env` and provide the variables.
 
 ## TODO
 
-- Upgrade Bootstrap/ fix styling.
+- ~~Upgrade Bootstrap/~~ fix styling (IE Compatibility for CSS Grid).
 - Change PDF generation template.
 - General fixes.
 - ...
