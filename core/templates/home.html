@@ -119,8 +119,8 @@
         const slotDetailListElmt = $("#slotDetail");
         const requestCountElmt = $(".request-count #count");
 
-        slotIdInpt.val(null);
-        slotDetailListElmt.hide();
+        $(slotIdInpt).val(null);
+        $(slotDetailListElmt).hide();
 
         $(selectSlotElmt).select2({
             ajax: {
@@ -169,8 +169,8 @@
             $(dayInfoElmt).text(`Day: ${data.day} (${nextDtTxt})`);
             $(timeInfoElmt).text(`Time: ${data.time}`);
 
-            slotIdInpt.val(data.id);
-            slotDetailListElmt.show();
+            $(slotIdInpt).val(data.id);
+            $(slotDetailListElmt).show();
         });
 
         // Set live count.
