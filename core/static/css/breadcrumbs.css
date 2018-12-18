@@ -1,0 +1,23 @@
+/*--------------------------------------------------------------
+Breadcrumbs styles:
+--------------------------------------------------------------*/
+.breadcrumbs ul {
+    list-style-type: none;
+    margin: 8px 0;
+    padding: 0;
+}
+
+.breadcrumbs li {
+    font-size: small;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.breadcrumbs li:before {
+    content: '> ';
+}
+
+.breadcrumbs li a {
+    color: inherit;
+    text-decoration: none;
+}

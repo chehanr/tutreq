@@ -1,0 +1,47 @@
+/*--------------------------------------------------------------
+Pagination styles:
+--------------------------------------------------------------*/
+.pagination {
+    border: 1px solid #f0f3be;
+    text-align: center;
+    padding: 0.5em;
+}
+
+.pagination ul {
+    list-style-type: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination ul .page-item {
+    display: inline-block;
+    padding: 0.25em;
+    text-align: center;
+}
+
+.pagination ul .page-item .page-link {
+    color: inherit;
+    font-size: small;
+    text-decoration: none;
+}
+
+.pagination ul .page-item.active .page-link {
+    cursor: default;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* .pagination .page-item:hover:not(.active) {} */
+
+.pagination ul .page-item.disabled .page-link {
+    cursor: default;
+    pointer-events: none;
+}
+
+/* .pagination .page-item:hover:not(.disabled) {} */
+
+
+.pagination ul .page-item .page-link .sr-only {
+    display: none;
+}

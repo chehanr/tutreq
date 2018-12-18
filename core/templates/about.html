@@ -1,34 +1,36 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}About{% endblock %}
+{% block title %}tutreq | About{% endblock %}
 {% block scripts_header %}
 {% endblock %}
-{% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="page-header">
-            <h1>About</h1>
-        </div>
-        <div class="col-md-12">
-            <h2>Tutreq</h2>
-            <p>...</p>
-            <h2>Author</h2>
-            <p>
-                This website was created and is maintained by Chehan Ratnasiri (<a href="https://twitter.com/chehanr/"
-                    target="_blank">@chehanr</a>) free of charge. <br />
-                The entire project is open source and can be viewed at <a href="https://github.com/chehanr/tutreq/"
-                    target="_blank">https://github.com/chehanr/tutreq</a> <br />
-                Suggestions/ enhancements and your own improvements are welcomed <a href="https://github.com/chehanr/tutreq/issues/"
-                    target="_blank">here.</a>
-            </p>
-            <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script>
-            <script type='text/javascript'>
-                kofiwidget2.init('Support Me on Ko-fi', '#46b798', 'A6364APX');
-                kofiwidget2.draw();
-            </script>
-        </div>
+{% block side_content %}
+<div class="side-content">
+    <div class="page-header">
+        <h1>About</h1>
+    </div>
+    <div class="side-bar">
     </div>
 </div>
+{% endblock %}
+{% block page_content %}
+<main class="page-content">
+    <h2>Tutreq</h2>
+    <p>...</p>
+    <h2>Author</h2>
+    <p>
+        This website was created and is maintained by Chehan Ratnasiri (<a href="https://twitter.com/chehanr/" target="_blank">@chehanr</a>)
+        free of charge. <br />
+        The entire project is open source and can be viewed at <a href="https://github.com/chehanr/tutreq/" target="_blank">https://github.com/chehanr/tutreq</a>
+        <br />
+        Suggestions/ enhancements and your own improvements are welcomed <a href="https://github.com/chehanr/tutreq/issues/"
+            target="_blank">here.</a>
+    </p>
+    <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script>
+    <script type='text/javascript'>
+        kofiwidget2.init('Support Me on Ko-fi', '#46b798', 'A6364APX');
+        kofiwidget2.draw();
+    </script>
+</main>
 {% endblock %}
 {% block scripts_footer %}
 {% endblock %}

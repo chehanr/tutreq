@@ -1,0 +1,46 @@
+/*--------------------------------------------------------------
+Form styles:
+--------------------------------------------------------------*/
+.form-element {
+    display: grid;
+    padding: 0.25em 0;
+    grid-template-columns: auto minmax(auto, 1fr);
+    grid-template-areas:
+        "label input"
+        "sub-text sub-text";
+}
+
+input,
+select {
+    grid-area: input;
+}
+
+label {
+    grid-area: label;
+    margin: 0 0.5em 0 0;
+}
+
+form button {
+    margin: 0.5em 0;
+}
+
+.form-invalid-feedback,
+.form-help-text {
+    font-size: small;
+    grid-area: sub-text;
+    text-align: right;
+}
+
+.form-invalid-feedback {
+    color: #e24949;
+}
+
+.form-invalid-feedback:before,
+.form-help-text:before {
+    content: "* ";
+}
+
+.form-hint-text {
+    font-size: small;
+    font-weight: lighter;
+}

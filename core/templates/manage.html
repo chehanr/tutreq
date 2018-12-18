@@ -1,103 +1,365 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load humanize %}
-{% block title %}Manage requests{% endblock %}
+{% block title %}tutreq | Manage{% endblock %}
 {% block scripts_header %}
-<script>
-    var dismissedIcon = "{% static 'icons/check.svg' %}";
-    var waitingIcon = "{% static 'icons/clock-outline.svg' %}";
-</script>
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
 {% endblock %}
-{% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="page-header">
-            <h1>Manage requests</h1>
-        </div>
-        <div class="card">
-            <div class="card-header">All requests</div>
-            <div class="card-body">
-                <!-- <h5 class="card-title">Special title treatment</h5> -->
-                <!-- <p class="card-text">View, dismiss and generate PDF records of lodged requests.</p> -->
-                <button id="manageCSVLogButton" type="button" class="btn btn-info" data-request-id="">Download Log</button>
+{% block side_content %}
+<div class="side-content">
+    <div class="page-header">
+        <h1>Manage</h1>
+        <p>Lodge or dislodge requests and download logs.</p>
+    </div>
+    <div class="side-bar">
+        <form class="search-form" id="searchForm" method="GET" novalidate="novalidate">
+            <small id="form-hint-text">Search for records.</small>
+            <div class="form-element">
+                <input type="text" id="searchInpt" name="query" placeholder="Search..." autocomplete="off" spellcheck="false">
             </div>
-            <div class="table-responsive">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Student ID</th>
-                                <th>Name</th>
-                                <th>Requested slot</th>
-                                <th>Lodged</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for request in requests %}
-                            <tr class='clickable-row' data-request-id='{{ request.pk }}' style="cursor: pointer;">
-                                <td>{{ requests.start_index|add:forloop.counter0 }}</td>
-                                <td>{{ request.student_id }}</td>
-                                <td>{{ request.student_name }}</td>
-                                <td>{{ request.slot }}</td>
-                                <td>{{ request.date_time|naturaltime }}</td>
-                                <td>
-                                    {% if request.dismissed %}
-                                    <img id="tableRequestStatusIcon" src="{% static 'icons/check.svg' %}" alt="Dismissed"
-                                        title="Dismissed">
-                                    {% else %}
-                                    <img id="tableRequestStatusIcon" src="{% static 'icons/clock-outline.svg' %}" alt="Waiting"
-                                        title="Waiting">
-                                    {% endif%}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="form-element">
+                <label for="searchTypeSlt">Search for</label>
+                <select id="searchTypeSlt" name="type">
+                    <option value="student">Students</option>
+                    <option value="unit">Units</option>
+                    <option value="feedback_ref">Feedback reference codes</option>
+                </select>
             </div>
-        </div>
-        <br />
-        <nav aria-label="Request manage pagination">
-            <ul class="pagination justify-content-center">
-                {% if requests.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ requests.previous_page_number }}" tabindex="-1">Previous</a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                </li>
-                {% endif %}
-                {% for i in requests.paginator.page_range %}
-                {% if requests.number == i %}
-                <li class="page-item active">
-                    <span class="page-link">
-                        {{ i }}
-                        <span class="sr-only">(current)</span>
-                    </span>
-                </li>
-                {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
-                {% endfor %}
-                {% if requests.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ requests.next_page_number }}">Next</a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% include '__items/modal_request_detail.html' %}
+            <button type="submit" class="small float-right">Search</button>
+            <div class="clearfix"></div>
+        </form>
+        <p class="side-bar-section">Downloadables</p>
+        <button id="downloadLogBtn" data-request-id="">Download Log</button>
     </div>
 </div>
 {% endblock %}
+{% block page_content %}
+<main class="page-content">
+    <!-- Pagination -->
+    {% include "__layouts/pagination.html" with objects=requests %}
+    <!--  -->
+    <div class="table">
+        <div class="table-row">
+            <div class="table-item"><strong>ID</strong></div>
+            <div class="table-item"><strong>Student ID</strong></div>
+            <div class="table-item"><strong>Name</strong></div>
+            <div class="table-item"><strong>Slot</strong></div>
+            <div class="table-item"><strong>Lodged</strong></div>
+            <div class="table-item"><strong>Status</strong></div>
+        </div>
+        {% for request in requests %}
+        <div class="table-row clickable-row" data-request-id="{{ request.pk }}">
+            <!-- <div class="table-item">{{ requests.start_index|add:forloop.counter0 }}</div> -->
+            <div class="table-item">{{ request.pk }}</div>
+            <div class="table-item">{{ request.student_id }}</div>
+            <div class="table-item">{{ request.student_name }}</div>
+            <div class="table-item">{{ request.slot }}</div>
+            <div class="table-item">{{ request.date_time|naturaltime }}</div>
+            <div class="table-item {% if not request.dismissed %}pending{% endif %}" id="requestStatusTi">
+                {{ request.dismissed|yesno:"Dismissed,Pending" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Modal -->
+    <div class="modal large" id="requestModal" data-request-id="">
+        <div class="modal-header">
+            <img src="{% static 'icons/cancel-small-white.svg' %}" alt="Close" class="close-button" />
+            <h1 class="title"></h1>
+            <p class="sub-title"></p>
+        </div>
+        <div class="modal-content">
+            <div class="box" id="requestInfoBox">
+                <h2>Request</h2>
+                <p>Status <span class="bold-text" id="requestStatus"></span></p>
+                <p>Requested on <span class="bold-text" id="requestDateTime"></span></p>
+                <p>Notes <span class="bold-text" id="requestNotes"></span></p>
+            </div>
+            <div class="box" id="studentInfoBox">
+                <h2>Student</h2>
+                <p>Name <span class="bold-text" id="studentName"></span></p>
+                <p>ID <span class="bold-text" id="studentID"></span></p>
+                <p>Contact number <span class="bold-text" id="studentConNumber"></span></p>
+            </div>
+            <div class="box" id="feedbackInfoBox">
+                <h2>Feedback</h2>
+                <p>Reference code <span class="bold-text" id="feedbackRefCode"></span></p>
+                <p>Satisfaction <span class="bold-text" id="feedbackSatisfaction"></span></p>
+                <p>Comment <span class="bold-text" id="feedbackComment"></span></p>
+                <p>Made on <span class="bold-text" id="feedbackDateTime"></span></p>
+            </div>
+            <div class="box" id="slotInfoBox">
+                <h2>Slot</h2>
+                <p>Unit <span class="bold-text" id="slotUnit"></span></p>
+                <p>Day <span class="bold-text" id="slotDay"></span></p>
+                <p>Time <span class="bold-text" id="slotTime"></span></p>
+                <p>Status <span class="bold-text" id="slotStatus"></span></p>
+            </div>
+            <div class="box" id="actionsBox">
+                <h2>Actions</h2>
+                <button class="btn-light" id="downloadPdfBtn">Download PDF</button>
+                <button class="btn-warning" id="archiveBtn">Archive</button>
+                <button class="btn-danger" id="dismissBtn">Dismiss</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p></p>
+        </div>
+    </div>
+    <!--  -->
+</main>
+{% endblock %}
 {% block scripts_footer %}
-<script src="{% static 'js/moment.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/modal.js' %}" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.7.7/dayjs.min.js" integrity="sha256-nML5WWBkqxd1XeyDqAZi25wXqlEeqd7dXYk/VX1UDeo="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.7.7/plugin/advancedFormat.js" integrity="sha256-vhODM8D28bhVfUVBhKwd3GIFYcCJbDu0ku2IWKpXqJ0="
+    crossorigin="anonymous"></script>
+<script>
+    dayjs.extend(dayjs_plugin_advancedFormat);
+</script>
+<script>
+    function populateModal(data, modalElmt) {
+        let headerTitleElmt = $(modalElmt).find(".modal-header .title");
+        let headerSubTitleElmt = $(modalElmt).find(".modal-header .sub-title");
+        let modalContentElmt = $(modalElmt).find(".modal-content");
+        let footerTextElmt = $(modalElmt).find(".modal-footer p");
+
+        let footerTxt = data.dismissed ? "Status: Dismissed" : "Status: Pending";
+        let requestStatusTxt = data.dismissed ? "Dismissed" : "Pending";
+        let requestDateTimeTxt = dayjs(data.date_time).format("MMMM Do YYYY, h:mm:ss a");
+        let requestNotesTxt = data.description ? `"${data.description}"` : "None";
+        let slotNextDateTimeTxt = dayjs(data.slot.next_date_time).format("MMMM Do YYYY");
+        let slotStatusTxt = data.slot.disabled ? "Unavailable" : "Available";
+
+        $(modalElmt).data("request-id", data.id);
+        $(headerTitleElmt).text(data.text);
+        $(headerSubTitleElmt).text(`Request ID: ${data.id}`);
+        $(footerTextElmt).text(footerTxt);
+
+        $(modalContentElmt).find("#requestStatus").text(requestStatusTxt);
+        $(modalContentElmt).find("#requestDateTime").text(requestDateTimeTxt);
+        $(modalContentElmt).find("#requestNotes").text(requestNotesTxt);
+        $(modalContentElmt).find("#studentName").text(data.student.name);
+        $(modalContentElmt).find("#studentID").text(data.student.id);
+        $(modalContentElmt).find("#studentConNumber").text(data.student.phone);
+        $(modalContentElmt).find("#feedbackRefCode").text(data.feedback_ref_code);
+
+        if (!$.isEmptyObject(data.feedback)) {
+            let feedbackDateTimeTxt = dayjs(data.feedback.date_time).format("MMMM Do YYYY, h:mm:ss a");
+
+            // Unhide.
+            $(modalContentElmt).find("#feedbackSatisfaction").parent().show();
+            $(modalContentElmt).find("#feedbackComment").parent().show();
+            $(modalContentElmt).find("#feedbackDateTime").parent().show();
+
+            $(modalContentElmt).find("#feedbackSatisfaction").text(data.feedback.satisfaction_val);
+            $(modalContentElmt).find("#feedbackComment").text(`"${data.feedback.description}"`);
+            $(modalContentElmt).find("#feedbackDateTime").text(feedbackDateTimeTxt);
+        } else {
+            $(modalContentElmt).find("#feedbackSatisfaction").parent().hide();
+            $(modalContentElmt).find("#feedbackComment").parent().hide();
+            $(modalContentElmt).find("#feedbackDateTime").parent().hide();
+        }
+
+        $(modalContentElmt).find("#slotUnit").text(`${data.unit.code} - ${data.unit.title} (${data.unit.course})`);
+        $(modalContentElmt).find("#slotDay").text(`${data.slot.day} (Next available: ${slotNextDateTimeTxt})`);
+        $(modalContentElmt).find("#slotTime").text(data.slot.time);
+        $(modalContentElmt).find("#slotStatus").text(slotStatusTxt);
+
+        if (data.archived) {
+            $(modalContentElmt).find("#archiveBtn").text("Unarchive")
+        } else {
+            $(modalContentElmt).find("#archiveBtn").text("Archive")
+        }
+
+        $(modalContentElmt).find("#dismissBtn").removeClass();
+        if (data.dismissed) {
+            $(modalContentElmt).find("#dismissBtn").text("Relodge")
+            $(modalContentElmt).find("#dismissBtn").addClass("btn-danger")
+        } else {
+            $(modalContentElmt).find("#dismissBtn").text("Dismiss")
+            $(modalContentElmt).find("#dismissBtn").addClass("btn-success")
+        }
+    }
+
+    jQuery(document).ready(function ($) {
+        const requestTableElmt = $(".table");
+        const modalElmt = $("#requestModal");
+        const downloadPdfBtnElmt = $("#downloadPdfBtn");
+        const archiveBtnElmt = $("#archiveBtn");
+        const dismissBtnElmt = $("#dismissBtn");
+
+        $(modalElmt).find(".modal-header .close-button").click(function () {
+            $(modalElmt).toggleClass("show");
+        });
+
+        // Hide the modal on `escape`.
+        $(document).keyup(function (e) {
+            if (e.key === "Escape" && $(modalElmt).hasClass("show")) {
+                $(modalElmt).removeClass("show");
+            }
+        });
+
+        $(requestTableElmt).find(".table-row").click(function () {
+            let requestId = $(this).data("request-id");
+            let dataDict = {
+                "request-id": requestId
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'ajax_request_info' %}",
+                data: dataDict,
+                success: function (response) {
+                    requestObj = response.request;
+
+                    if (!$.isEmptyObject(requestObj)) {
+                        populateModal(requestObj, modalElmt);
+                        modalElmt.toggleClass("show");
+                        // $(modalElmt).fadeIn();
+                    } else {
+                        // showErrorMsg("No results...", container);
+                    }
+                },
+                error: function (xhr, status, error) {}
+            });
+        });
+
+        // PDF download button.
+        $(downloadPdfBtnElmt).click(function () {
+            let requestId = $(this).closest(modalElmt).data("request-id");
+            let baseUrl = "{% url 'generate_pdf' %}";
+            let dataDict = {
+                "request-id": requestId
+            };
+
+            // TODO replace with PDF viewer.
+            $.ajax({
+                type: "GET",
+                url: baseUrl,
+                data: dataDict,
+                success: function (response, status, xhr) {
+                    // https://stackoverflow.com/questions/16086162/handle-file-download-from-ajax-post
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader("Content-Disposition");
+                    if (disposition && disposition.indexOf("attachment") !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            filename = matches[1].replace(/['"]/g, '');
+                        }
+                    }
+
+                    var type = xhr.getResponseHeader("Content-Type");
+                    var blob = new Blob([response], {
+                        type: type
+                    });
+
+                    if (typeof window.navigator.msSaveBlob !== "undefined") {
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location = downloadUrl;
+                        }
+
+                        setTimeout(function () {
+                            URL.revokeObjectURL(downloadUrl);
+                        }, 100); // cleanup
+                    }
+                }
+            });
+            return false;
+        });
+
+        // Dismiss/ relodge button.
+        $(dismissBtnElmt).click(function () {
+            let requestId = $(this).closest(modalElmt).data("request-id");
+            let baseUrl = "{% url 'ajax_dismiss_relodge_request' %}";
+            let dataDict = {
+                "request-id": requestId
+            };
+
+            $.ajax({
+                type: "GET",
+                url: baseUrl,
+                data: dataDict,
+                success: function (response) {
+                    if (!$.isEmptyObject(response)) {
+                        let isDismissed = response.dismissed;
+                        let tableRowElmt = $(requestTableElmt).find(
+                            `[data-request-id="${requestId}"]`);
+
+                        $(modalElmt).find(".modal-content #dismissBtn").removeClass();
+                        if (isDismissed) {
+                            $(tableRowElmt).find("#requestStatusTi").text("Dismissed");
+                            $(tableRowElmt).find("#requestStatusTi").removeClass("pending");
+                            $(modalElmt).find(".modal-footer p").text("Status: Dismissed");
+                            $(modalElmt).find(".modal-content #dismissBtn").text("Relodge");
+                            $(modalElmt).find(".modal-content #dismissBtn").addClass(
+                                "btn-danger");
+                        } else {
+                            $(tableRowElmt).find("#requestStatusTi").text("Pending");
+                            $(tableRowElmt).find("#requestStatusTi").addClass("pending");
+                            $(modalElmt).find(".modal-footer p").text("Status: Pending");
+                            $(modalElmt).find(".modal-content #dismissBtn").text("Dismiss");
+                            $(modalElmt).find(".modal-content #dismissBtn").addClass(
+                                "btn-success");
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+
+        $(archiveBtnElmt).click(function () {
+            let requestId = $(this).closest(modalElmt).data("request-id");
+            let baseUrl = "{% url 'ajax_archive_unarchive_request' %}";
+            let dataDict = {
+                "request-id": requestId
+            };
+
+            $.ajax({
+                type: "GET",
+                url: baseUrl,
+                data: dataDict,
+                success: function (response) {
+                    if (!$.isEmptyObject(response)) {
+                        let isArchived = response.archived;
+                        let tableRowElmt = $(requestTableElmt).find(
+                            `[data-request-id="${requestId}"]`);
+
+                        // $(modalElmt).find(".modal-content #archiveBtn").removeClass();
+                        if (isArchived) {
+                            tableRowElmt.hide();
+                            $(modalElmt).find(".modal-content #archiveBtn").text(
+                                "Unarchive");
+                        } else {
+                            tableRowElmt.show();
+                            $(modalElmt).find(".modal-content #archiveBtn").text("Archive");
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
 {% endblock %}

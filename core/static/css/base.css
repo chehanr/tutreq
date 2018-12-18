@@ -1,0 +1,261 @@
+/*--------------------------------------------------------------
+CSS Reset
+--------------------------------------------------------------*/
+html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+img {
+    display: block;
+    border: 0;
+    width: 100%;
+    height: auto;
+}
+
+/*--------------------------------------------------------------
+Typography
+--------------------------------------------------------------*/
+body,
+button,
+input,
+select,
+textarea {
+    color: #404040;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    padding: 0.5em 0;
+}
+
+p {
+    margin: 0;
+    padding: 0.5em 0;
+}
+
+/*--------------------------------------------------------------
+General styles
+--------------------------------------------------------------*/
+.masthead {
+    background-color: #02c39a;
+    color: #ffffff;
+}
+
+.masthead a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.branding {
+    display: flex;
+    align-items: center;
+}
+
+.branding p {
+    font-family: 'Ubuntu', sans-serif;
+    margin: 0 10px 0 0;
+}
+
+.branding img {
+    float: left;
+    height: 40px;
+    margin: 8px 10px;
+    width: 40px;
+}
+
+.nav-bar {
+    background-color: #00a896;
+    color: #ffffff;
+}
+
+.nav-bar ul {
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.nav-bar li {
+    display: inline-block;
+    padding: 16px;
+    text-align: center;
+}
+
+.nav-bar li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.nav-bar li a:hover {
+    color: #f0f3bd;
+}
+
+.nav-bar .item-active {
+    background-color: #028090;
+}
+
+.page-header,
+.side-bar {
+    padding: 1em;
+}
+
+.side-bar {
+    background-color: #f0f3bd;
+}
+
+.side-bar-section {
+    font-weight: bold;
+    width: 100%;
+}
+
+.page-content {
+    background-color: #ffffff;
+    color: #313131;
+    padding: 0.5em;
+}
+
+.footer {
+    background-color: #028090;
+    color: #ffffff;
+}
+
+.footer a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.fineprint {
+    font-size: small;
+    font-weight: lighter;
+    margin: 0 0.5em;
+    text-align: right;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+/* Use for after floating buttons in forms etc. */
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+}
+
+/*--------------------------------------------------------------
+If no grid support, limit width to 50em and center align 
+
+TODO Do this...
+--------------------------------------------------------------*/
+@supports not (display: grid) {
+
+    .masthead,
+    .nav-bar,
+    .page-header,
+    .page-content,
+    .side-bar,
+    .footer {
+        max-width: 50em;
+        margin: 0 auto;
+    }
+}
+
+
+/*--------------------------------------------------------------
+CSS Grid layout:
+--------------------------------------------------------------*/
+@supports (display: grid) {
+    @media screen {
+        .site {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(2, minmax(56px, auto)) auto minmax(100vh, auto) auto;
+            grid-template-areas:
+                "masthead"
+                "nav-bar"
+                "side-content"
+                "page-content"
+                "footer";
+        }
+
+        .side-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "page-header"
+                "side-bar";
+        }
+
+        .masthead {
+            grid-area: masthead;
+        }
+
+        .nav-bar {
+            grid-area: nav-bar;
+        }
+
+        .side-content {
+            grid-area: side-content;
+        }
+
+        .footer {
+            grid-area: footer;
+        }
+
+        .page-header {
+            grid-area: page-header;
+        }
+
+        .page-content {
+            grid-area: page-content;
+        }
+
+        .side-bar {
+            grid-area: side-bar;
+        }
+    }
+
+    @media screen and (min-width: 767px) {
+        .site {
+            grid-template-columns: 1fr 2fr;
+            grid-template-rows: minmax(56px, auto) minmax(100vh, auto) auto;
+            grid-template-areas:
+                "masthead nav-bar"
+                "side-content page-content"
+                "footer footer";
+        }
+
+        .side-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 2fr;
+            grid-template-areas:
+                "page-header"
+                "side-bar";
+        }
+    }
+
+    @media screen and (min-width: 1200px) {}
+}

@@ -1,0 +1,80 @@
+/*--------------------------------------------------------------
+Modal styles:
+--------------------------------------------------------------*/
+.modal {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.7);
+    display: none;
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.modal.show {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: minmax(auto, 100px) auto minmax(auto, 50px);
+    grid-template-areas:
+        "modal-header"
+        "modal-content"
+        "modal-footer";
+}
+
+.modal-header {
+    background-color: #00a896;
+    display: grid;
+    grid-area: modal-header;
+    grid-template-columns: auto 32px;
+    grid-template-areas:
+        "title close-button"
+        "sub-title sub-title";
+    padding: 0.5em;
+    overflow: hidden;
+}
+
+.modal-header .title {
+    align-self: center;
+    color: #ffffff;
+    font-size: large;
+    grid-area: title;
+}
+
+.modal-header .sub-title {
+    color: #ffffff;
+    font-size: medium;
+    grid-area: sub-title;
+}
+
+.modal-header .close-button {
+    cursor: pointer;
+    grid-area: close-button;
+    height: 24px;
+    justify-self: right;
+    width: 24px;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    grid-area: modal-content;
+    padding: 0.5em;
+    overflow: auto;
+}
+
+.modal-footer {
+    background-color: #028090;
+    grid-area: modal-footer;
+    padding: 0.5em;
+    overflow: hidden;
+}
+
+.modal-footer p {
+    color: #ffffff;
+    font-size: small;
+}
+
+.modal.large {
+    height: 95%;
+    width: 95%;
+}

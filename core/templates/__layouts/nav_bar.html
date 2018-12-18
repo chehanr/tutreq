@@ -1,0 +1,24 @@
+<nav class="nav-bar">
+    <ul class="float-left">
+        <li class="{% if active_page == 'home' %}item-active{% endif %}">
+            <a href="{% url 'home' %}" target="_self">Request</a>
+        </li>
+        <li class="{% if active_page == 'feedback' %}item-active{% endif %}">
+            <a href="{% url 'feedback' %}" target="_self">Feedback</a>
+        </li>
+    </ul>
+    <ul class="float-right">
+        {% if user.is_authenticated %}
+        <li class="{% if active_page == 'manage' %}item-active{% endif %}">
+            <a href="{% url 'manage' %}" target="_self">Manage</a>
+        </li>
+        <li>
+            <a href="{% url 'admin:logout' %}" target="_self">Logout</a>
+        </li>
+        {% else %}
+        <li>
+            <a href="{% url 'admin:login' %}" target="_self">Admin</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>

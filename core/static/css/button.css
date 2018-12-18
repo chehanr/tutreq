@@ -1,0 +1,50 @@
+/*--------------------------------------------------------------
+Button styles:
+--------------------------------------------------------------*/
+button {
+    background-color: #00a896;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    padding: 0.25em 0.5em;
+    text-align: center;
+}
+
+button.small {
+    font-size: small;
+    padding: 0.2em 0.45em;
+}
+
+button.outline {
+    background-color: transparent !important;
+    border: 1px solid #00a896;
+    color: #000000 !important;
+}
+
+button.btn-light {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    color: #000000;
+}
+
+button.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #000000;
+}
+
+
+button.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #ffffff;
+}
+
+button.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000000;
+}

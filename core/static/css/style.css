@@ -1,22 +1,74 @@
-h1,
-h2,
-h3,
-h4 {
-    padding: 15px 0 5px 0;
+@import url("/static/css/base.css");
+@import url("/static/css/box.css");
+@import url("/static/css/button.css");
+@import url("/static/css/form.css");
+
+/* -- home.html */
+.select2 {
+    width: 100% !important;
 }
 
-.modal-title {
-    padding: 0;
+.slot-container {
+    display: grid;
+    padding: 0.5em 0;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+    grid-column-gap: 0.5em;
+    grid-row-gap: 0.5em;
+    grid-template-areas:
+        "select-slot"
+        "slot-detail";
 }
 
-#mainContentContainer {
-    padding: 5px 0;
+.slot-container .select-slot {
+    grid-area: select-slot;
 }
 
-#selectionContainer {
-    padding: 0 0 15px 0;
+.slot-container .select-detail {
+    grid-area: slot-detail;
 }
 
-#slotDetailList {
-    padding: 0 0 15px 0;
+.select-slot-result {
+    display: grid;
+    padding: 0 0.5em;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slot-unit"
+        "slot-info";
+}
+
+.select-slot-result .slot-unit {
+    grid-area: slot-unit;
+    font-weight: bolder;
+}
+
+.select-slot-result .slot-info {
+    grid-area: slot-info;
+    font-size: small;
+}
+
+.request-count p {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.request-count .odometer {
+    padding: inherit;
+}
+
+/*  Disable textarea resizing. */
+#requestForm textarea {
+    resize: none;
+}
+
+/*--------------------------------------------------------------
+CSS Grid layout:
+--------------------------------------------------------------*/
+@supports (display: grid) {
+    @media screen {}
+
+    @media screen and (min-width: 767px) {}
+
+    @media screen and (min-width: 1200px) {}
 }

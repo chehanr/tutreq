@@ -1,0 +1,96 @@
+@import url("/static/css/modal.css");
+@import url("/static/css/pagination.css");
+
+.table {
+    border-top: 1px solid #028090;
+    border-right: 1px solid #028090;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin: 0.5em 0;
+}
+
+.table-item {
+    border-left: 1px solid #028090;
+    border-bottom: 1px solid #028090;
+    font-size: small;
+    padding: 0.25em 0.5em;
+}
+
+.table-row {
+    display: contents;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover .table-item {
+    background-color: #f0f3bd;
+}
+
+.table-item.pending {
+    font-weight: bold;
+}
+
+/* The modal. */
+#requestModal #requestInfoBox,
+#studentInfoBox,
+#feedbackInfoBox,
+#slotInfoBox,
+#actionsBox p {
+    font-size: smaller;
+}
+
+/*--------------------------------------------------------------
+CSS Grid layout:
+--------------------------------------------------------------*/
+@supports (display: grid) {
+    @media screen {
+        #requestModal .modal-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(5, 1fr);
+            grid-template-areas:
+                "requestInfoBox"
+                "studentInfoBox"
+                "feedbackInfoBox"
+                "slotInfoBox"
+                "actionsBox";
+        }
+
+
+        #requestModal #requestInfoBox {
+            grid-area: requestInfoBox;
+        }
+
+        #requestModal #studentInfoBox {
+            grid-area: studentInfoBox;
+        }
+
+        #requestModal #feedbackInfoBox {
+            grid-area: feedbackInfoBox;
+        }
+
+        #requestModal #slotInfoBox {
+            grid-area: slotInfoBox;
+        }
+
+        #requestModal #actionsBox {
+            grid-area: actionsBox;
+        }
+    }
+
+    @media screen and (min-width: 767px) {
+        #requestModal .modal-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr auto;
+            grid-template-areas:
+                "requestInfoBox studentInfoBox"
+                "feedbackInfoBox slotInfoBox"
+                "actionsBox actionsBox";
+        }
+    }
+
+    @media screen and (min-width: 1200px) {}
+}
