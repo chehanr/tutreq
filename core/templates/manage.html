@@ -148,6 +148,7 @@
 
         if (!$.isEmptyObject(data.feedback)) {
             let feedbackDateTimeTxt = dayjs(data.feedback.date_time).format("MMMM Do YYYY, h:mm:ss a");
+            let feedbackDescriptionTxt = data.feedback.description ? `"${data.feedback.description}"` : "No comment";
 
             // Unhide.
             $(modalContentElmt).find("#feedbackSatisfaction").parent().show();
@@ -155,7 +156,7 @@
             $(modalContentElmt).find("#feedbackDateTime").parent().show();
 
             $(modalContentElmt).find("#feedbackSatisfaction").text(data.feedback.satisfaction_val);
-            $(modalContentElmt).find("#feedbackComment").text(`"${data.feedback.description}"`);
+            $(modalContentElmt).find("#feedbackComment").text(feedbackDescriptionTxt);
             $(modalContentElmt).find("#feedbackDateTime").text(feedbackDateTimeTxt);
         } else {
             $(modalContentElmt).find("#feedbackSatisfaction").parent().hide();
