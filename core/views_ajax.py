@@ -1,10 +1,10 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from django.db.models import Q
 
 from .models import Request, Slot
-from .utils import (get_day_val, get_next_date_time, get_request_item_dict,
-                    get_time_val)
+from .utils import  get_next_date_time, get_request_item_dict
 
 # Ajax responses:
 
@@ -88,52 +88,46 @@ def request_info(request):
 
     return JsonResponse(response_dict, status=status_code)
 
+def slots_search(request):
+    """ Json response to search slots. """
 
-def slots_info(request):
-    """Json response to get slot information."""
-
-    unit_id = request.GET.get('unit-id')
     status_code = 200
+    response_dict = {
+        'status': False,
+    }
 
-    slot_objs = Slot.objects.filter(unit=unit_id, disabled=False)
-    slot_items = []
+    if request.is_ajax() and request.method == 'GET':
+        search_q = request.GET.get('q', None)
 
-    for slot_obj in slot_objs:
-        slot = slot_obj
-        slot_day = slot.day
-        slot_time = slot.time
-        slot_disabled = slot.disabled
+        if search_q:
+            search_q = search_q.strip()
+            slot_objs = Slot.objects.filter(Q(unit__title__icontains=search_q) | Q(unit__code__icontains=search_q))
 
-        unit = slot.unit
-        unit_code = unit.code
-        unit_course = unit.course.title
-        unit_title = unit.title
+        if slot_objs:
+            result_list = []
 
-        slot_item = {
-            'id': slot.pk,
-            'text': str(slot),
-            'day': get_day_val(slot_day),
-            'time': get_time_val(slot_time),
-            'next_date_time': get_next_date_time(slot_day),
-            'disabled': slot_disabled,
-            'unit': {
-                'code': unit_code,
-                'course': unit_course,
-                'title': unit_title,
-            },
-        }
+            for slot_obj in slot_objs:
+                result_item = {
+                    'id': slot_obj.pk,
+                    'text': str(slot_obj),
+                    'day': slot_obj.get_day_display(),
+                    'time': slot_obj.get_time_display(),
+                    'next_date_time': get_next_date_time(slot_obj.day),
+                    'disabled': slot_obj.disabled,
+                    'unit': {
+                        'code': slot_obj.unit.code,
+                        'course': slot_obj.unit.course.title,
+                        'program': slot_obj.unit.course.program.title,
+                        'title': slot_obj.unit.title,
+                    },
+                }
 
-        slot_items.append(slot_item)
+                result_list.append(result_item)
 
-    if slot_items:
-        response_dict = {
-            'slots': slot_items,
-        }
-    else:
-        status_code = 400
-        response_dict = {
-            'slots': None,
-        }
+            response_dict['status'] = True
+            response_dict['results'] = result_list
+        else:
+            response_dict['results'] = []
 
     return JsonResponse(response_dict, status=status_code)
 

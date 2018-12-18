@@ -3,6 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 
 from .forms import FeedbackForm, RequestFeedbackRefField, RequestForm
 from .models import Feedback, Request, Slot, Unit
@@ -11,29 +12,62 @@ from .models import Feedback, Request, Slot, Unit
 
 
 @staff_member_required
-def manage(request, view_type=None):
+def manage(request):
     """View for `manage`."""
 
-    if view_type == 'all':
-        request_objs = Request.objects.all().order_by('-date_time')
-    elif view_type == 'archive':
-        request_objs = Request.objects.filter(
-            archived=True).order_by('-date_time')
-    elif view_type == '!archive':
-        request_objs = Request.objects.filter(
-            archived=False).order_by('-date_time')
-    elif view_type == 'dismissed':
-        request_objs = Request.objects.filter(
-            dismissed=True).order_by('-date_time')
-    elif view_type == '!dismissed':
-        request_objs = Request.objects.filter(
-            dismissed=False).order_by('-date_time')
+    search_q = request.GET.get('query', None)
+    searh_type_q = request.GET.get('type', None)
+    filter_q = request.GET.get('filter', None)
+    order_by_q = request.GET.get('order', 'pending')
+    result_count_q = int(request.GET.get('count', 25))
+
+    # Searching objects.
+    if search_q:
+        search_q = search_q.strip()
+
+        if searh_type_q in ('unit', 'feedback_ref'):
+            # TODO add slot search.
+            if searh_type_q == 'unit':
+                request_objs = Request.objects.filter(Q(slot__unit__title__icontains=search_q) | Q(slot__unit__code__icontains=search_q))
+            else:
+                request_objs = Request.objects.filter(feedback_ref__icontains=search_q)
+        else:
+            # Default to student search.
+            request_objs = Request.objects.filter(Q(student_id__icontains=search_q) | Q(student_name__icontains=search_q))
     else:
-        request_objs = Request.objects.filter(
-            archived=False).order_by('dismissed', '-date_time')
+        # Get all objects when no search query.
+        request_objs = Request.objects.all()
+
+    # Filtering objects.
+    if filter_q in ('archived', '-archived', 'dismissed', '-dismissed'):    
+        filter_q = filter_q.strip()
+
+        if filter_q == 'archived':
+            request_objs =request_objs.filter(archived=True)
+        elif filter_q == '-archived':
+            request_objs = request_objs.filter(archived=False)
+        elif filter_q == 'dismissed':
+            request_objs = request_objs.filter(dismissed=True)
+        elif filter_q == '-dismissed':
+            request_objs = request_objs.filter(dismissed=False)
+    else:
+        request_objs = request_objs.exclude(archived=True)
+
+
+    # Odering objects.
+    if order_by_q in ('date_time', '-date_time', 'dismissed', '-dismissed'):
+        order_by_q = order_by_q.strip()
+        request_objs = request_objs.order_by(order_by_q)
+    else:
+        # `pending` ordering.
+        request_objs = request_objs.order_by('dismissed', '-date_time')
+
+    if result_count_q not in (25, 50, 100):
+        # Reset to 25 results.
+        result_count_q = 25
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(request_objs, 10)
+    paginator = Paginator(request_objs, result_count_q)
 
     try:
         requests = paginator.page(page)
@@ -43,7 +77,7 @@ def manage(request, view_type=None):
         requests = paginator.page(paginator.num_pages)
 
     return render(request, 'manage.html', {'requests': requests,
-                                           'nbar_active': 'manage', })
+                                           'active_page': 'manage', })
 
 
 def feedback(request, ref=None):
@@ -69,7 +103,7 @@ def feedback(request, ref=None):
                     feedback_obj.save()
 
                     message_title = 'Feedback submission successful!'
-                    message_text = ('Your feedback for reference code: {0} has been '
+                    message_text = ('Your feedback for reference code {0} has been '
                                     'submitted!').format(request_obj.feedback_ref)
 
                     messages.success(request, message_title,
@@ -79,9 +113,9 @@ def feedback(request, ref=None):
                 form = FeedbackForm()
 
             return render(request, 'feedback.html', {'form': form,
-                                                     'form_method': 'post',
+                                                     'form_method': 'POST',
                                                      'form_submit_button': 'Submit feedback',
-                                                     'nbar_active': 'feedback', })
+                                                     'active_page': 'feedback', })
         else:
             # TODO show locked msg.
             return redirect('feedback')
@@ -98,69 +132,42 @@ def feedback(request, ref=None):
             form = RequestFeedbackRefField()
 
         return render(request, 'feedback.html', {'form': form,
-                                                 'form_method': 'get',
+                                                 'form_method': 'GET',
                                                  'form_submit_button': 'Find',
-                                                 'nbar_active': 'feedback', })
+                                                 'active_page': 'feedback', })
 
 
 def home(request):
     """View for `home`."""
 
-    unit_objs = Unit.objects.all().order_by('course')
-
-    course_items = {'courses': []}
-
-    for unit_obj in unit_objs:
-        unit_id = unit_obj.pk
-        unit_title = unit_obj.title
-        unit_code = unit_obj.code
-        course_title = unit_obj.course.title
-        has_slots = False
-
-        if Slot.objects.filter(unit=unit_id):
-            has_slots = True
-
-        course_item = {
-            'title': course_title,
-            'units': [],
-        }
-
-        unit_item = {
-            'id': unit_id,
-            'title': unit_title,
-            'code': unit_code,
-            'has_slots': has_slots,
-        }
-
-        course_items['courses'].append(course_item)
-
-        for course_item in course_items['courses']:
-            if course_item['title'] == course_title:
-                course_item['units'].append(unit_item)
-
     if request.method == 'POST':
         form = RequestForm(request.POST)
 
         if form.is_valid():
-            request_obj = form.save()
-            message_title = 'Your session is confirmed! Make sure to attend the tutoring session on time.'
-            message_text = ('Your tutor request has been '
-                            'submitted and will be reviewed shortly.<br/>'
-                            'Feedback reference code: <strong>{0}</strong><br/>').format(request_obj.feedback_ref)
+            slot_obj = form.cleaned_data.get('slot')
+            # slot_obj = Slot.objects.get(pk=slot_id)
+
+            if slot_obj.disabled:
+                messages.error(request, 'Slot not available!')
+            else:  
+                request_obj = form.save()
+                message_title = 'Your session is confirmed! Make sure to attend the tutoring session on time.'
+                message_text = ('Your tutor request has been '
+                                'submitted and will be reviewed shortly.<br/>'
+                                'Feedback reference code: <strong>{0}</strong><br/>').format(request_obj.feedback_ref)
+
+                messages.success(request, message_title, extra_tags=message_text)
+                
             # Reset the form.
             form = RequestForm()
-
-            messages.success(request, message_title, extra_tags=message_text)
-
     else:
         form = RequestForm()
 
     return render(request, 'home.html', {'form': form,
-                                         'select_items': course_items,
-                                         'nbar_active': 'home', })
+                                         'active_page': 'home', })
 
 
 def about(request):
     """Displays a static about page."""
 
-    return render(request, 'about.html', {'nbar_active': 'about', })
+    return render(request, 'about.html', {'active_page': 'about', })
