@@ -24,27 +24,6 @@ def get_next_date_time(day):
     return date_time.replace(minute=0, hour=0, second=0, microsecond=0)
 
 
-def get_day_val(day_key):
-    day_val = [day[1]
-               for day in DAYS_OF_WEEK if day[0] == day_key][0]
-
-    return day_val
-
-
-def get_time_val(time_key):
-    time_val = [time[1]
-                for time in AVAILABLE_TIMES if time[0] == time_key][0]
-
-    return time_val
-
-
-def get_satisfaction_val(satis_key):
-    satis_val = [satis[1]
-                 for satis in SATISFACTION_LEVELS if satis[0] == satis_key][0]
-
-    return satis_val
-
-
 def get_request_item_dict(request_obj):
     """Method to format request objects and return a dictionary."""
 
@@ -69,14 +48,14 @@ def get_request_item_dict(request_obj):
     else:
         feedback = feedback_obj
         feedback_satisfaction_level = feedback.satisfaction
-        feedback_satisfaction_val = get_satisfaction_val(feedback.satisfaction)
+        # feedback_satisfaction_val = get_satisfaction_val(feedback.satisfaction)
         feedback_description = feedback.description
         feedback_date_time = feedback.date_time
         feedback_dict = {
             'id': feedback.pk,
             'text': str(feedback),
             'satisfaction': feedback_satisfaction_level,
-            'satisfaction_val': feedback_satisfaction_val,
+            'satisfaction_val': feedback.get_satisfaction_display(),
             'description': feedback_description,
             'date_time': feedback_date_time,
         }
@@ -94,8 +73,8 @@ def get_request_item_dict(request_obj):
         'slot': {
             'id': slot.pk,
             'text': str(slot),
-            'day': get_day_val(slot_day),
-            'time': get_time_val(slot_time),
+            'day': slot.get_day_display(),
+            'time': slot.get_time_display(),
             'next_date_time': get_next_date_time(slot_day),
             'disabled': slot_disabled,
         },
