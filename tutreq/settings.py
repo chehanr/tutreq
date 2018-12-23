@@ -31,6 +31,7 @@ DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -49,9 +50,11 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'nocaptcha_recaptcha',
     'easy_pdf',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
